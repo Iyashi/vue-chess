@@ -42,7 +42,7 @@ import {
   isBlackFigure,
   isWhiteFigure,
   getFigureDesciption,
-  isAnyFigure,
+  isFigure,
   MovedOnce,
   hasMovedOnce,
 } from './figure'
@@ -310,8 +310,8 @@ describe('isPromotedFigure', () => {
   })
 })
 
-describe('isAnyFigure', () => {
-  const fn = isAnyFigure
+describe('isFigure', () => {
+  const fn = isFigure
   it('should return true for any valid figure', () => {
     expect(fn(PawnFigure)).toBe(true)
     expect(fn(RookFigure)).toBe(true)

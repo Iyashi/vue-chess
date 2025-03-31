@@ -93,9 +93,9 @@ export type AnyWhiteFigure =
   | typeof WhitePromotedBishopFigure
   | typeof WhitePromotedQueenFigure
 
-export type AnyFigure = AnyBlackFigure | AnyWhiteFigure
+export type Figure = AnyBlackFigure | AnyWhiteFigure
 
-export function isAnyFigure(v: unknown): v is AnyFigure {
+export function isFigure(v: unknown): v is Figure {
   return (
     isPawnFigure(v) ||
     isRookFigure(v) ||
@@ -112,7 +112,7 @@ export function hasMovedOnce(v: unknown): v is typeof MovedOnce {
   return typeof v === 'number' && (v & MovedOnce) === MovedOnce
 }
 
-export function getFigureDesciption(v: AnyFigure): string {
+export function getFigureDesciption(v: Figure): string {
   if (typeof v !== 'number') return 'Unknown'
   switch (v & FigureFlags) {
     default:
