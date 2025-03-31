@@ -1,15 +1,18 @@
+<script setup lang="ts"></script>
+
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <main class="about-view">
+    <header>
+      <h2>About View</h2>
+    </header>
+
+    <section class="content">
+      <p>
+        This is the about view of my application. It provides information about the purpose and
+        features of the application.
+      </p>
+    </section>
+  </main>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

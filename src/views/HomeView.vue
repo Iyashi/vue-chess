@@ -1,9 +1,15 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <main>
-    <TheWelcome />
+  <main class="home-view">
+    <header>
+      <h2>Home View</h2>
+    </header>
+
+    <section class="content">
+      <p>Hello there! Welcome to my chess game application.</p>
+    </section>
   </main>
 </template>
+
+<style lang="scss" scoped></style>
