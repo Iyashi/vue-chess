@@ -22,6 +22,7 @@ import {
   isFigure,
   MovedOnce,
   hasMovedOnce,
+  BaseFigures,
 } from './figure'
 
 describe('isPawnFigure', () => {
@@ -399,11 +400,6 @@ describe('hasMovedOnce', () => {
 describe('getFigureDesciption', () => {
   const fn = getFigureDesciption
 
-  // No figure (empty tile)
-  it('should return None for no figure (empty tile)', () => {
-    expect(fn(0)).toBe('None')
-  })
-
   // Base figures
   it('should return the correct description for a pawn', () => {
     expect(fn(PawnFigure)).toBe('Pawn')
@@ -504,6 +500,19 @@ describe('getFigureDesciption', () => {
   })
   it('should return the correct description for a white promoted queen', () => {
     expect(fn(WhiteFigure | QueenFigure | PromotedFigure)).toBe('White Queen (Promoted)')
+  })
+
+  // No figure (empty tile)
+  it('should return None for no figure (empty tile)', () => {
+    expect(fn(0)).toBe('None')
+  })
+
+  // Unknown figure (empty tile)
+  it('should return Unknown for indetermined figure', () => {
+    expect(fn(BaseFigures)).toBe('Unknown')
+    expect(fn(BaseFigures | PromotedFigure)).toBe('Unknown (Promoted)')
+    expect(fn(BlackFigure | BaseFigures | PromotedFigure)).toBe('Black Unknown (Promoted)')
+    expect(fn(WhiteFigure | BaseFigures | PromotedFigure)).toBe('White Unknown (Promoted)')
   })
 
   // Invalid figures
