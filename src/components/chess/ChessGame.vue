@@ -1,9 +1,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { createBoard } from '@/chess/board'
-import { type Tile } from '@/chess/tile'
-import { isBlackFigure, isWhiteFigure, getFigureDesciption, MovedOnce } from '@/chess/figure'
+import { getIndexForVerticalKey, type Tile } from '@/chess/tile'
+import {
+  isBlackFigure,
+  isWhiteFigure,
+  isPawnFigure,
+  getFigureDesciption,
+  type Figure,
+  MovedOnce,
+} from '@/chess/figure'
 import ChessBoard from '@/components/chess/ChessBoard.vue'
+import ChessPromotionDialog from '@/components/chess/ChessPromotionDialog.vue'
 
 const board = ref(createBoard())
 
@@ -34,13 +42,39 @@ async function handleMove(fromTile: Tile, toTile: Tile) {
   board.value[fromTile] = 0
   board.value[toTile] = movingFigure | MovedOnce
   console.info('Moved from', fromTile, 'to', toTile)
+
+  // start pawn promotion if a pawn reaches the end of the board
+  const row = getIndexForVerticalKey(toTile)
+  if (isPawnFigure(movingFigure) && (row === 0 || row == 7)) {
+    startPromotion(toTile, movingFigure)
+  }
+}
+
+// Handle Pawn Promotion
+const promotion = ref<{ tile: Tile; figure: Figure } | null>(null)
+function startPromotion(tile: Tile, figure: Figure) {
+  if (promotion.value !== null) return // promotion already started
+  promotion.value = { tile, figure }
+  console.info('Promoting pawn on', tile)
+}
+function endPromotion(newFigure: Figure) {
+  if (promotion.value === null) return // promotion not started yet
+  board.value[promotion.value.tile] = newFigure
+  console.info('Promoting pawn on', promotion.value.tile, 'to', getFigureDesciption(newFigure))
+  promotion.value = null
 }
 </script>
 
 <template>
   <div class="chess-game">
     <ChessBoard :board="board" @move="handleMove" />
+
+    <ChessPromotionDialog v-if="promotion" :figure="promotion!.figure" @promote="endPromotion" />
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.chess-game {
+  position: relative; // make promotion dialog overlay chess-game container
+}
+</style>
