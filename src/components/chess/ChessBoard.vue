@@ -53,9 +53,9 @@ function getFigureType(
   } else if (isRookFigure(figure)) {
     return 'rook'
   } else if (isKnightFigure(figure)) {
-    return 'bishop'
-  } else if (isBishopFigure(figure)) {
     return 'knight'
+  } else if (isBishopFigure(figure)) {
+    return 'bishop'
   } else if (isQueenFigure(figure)) {
     return 'queen'
   } else if (isKingFigure(figure)) {
