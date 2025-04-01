@@ -1,16 +1,12 @@
 import {
-  WhitePawnFigure,
-  WhiteRookFigure,
-  WhiteKnightFigure,
-  WhiteBishopFigure,
-  WhiteQueenFigure,
-  WhiteKingFigure,
-  BlackPawnFigure,
-  BlackRookFigure,
-  BlackKnightFigure,
-  BlackBishopFigure,
-  BlackQueenFigure,
-  BlackKingFigure,
+  BlackFigure,
+  WhiteFigure,
+  PawnFigure,
+  RookFigure,
+  KnightFigure,
+  BishopFigure,
+  QueenFigure,
+  KingFigure,
   type Figure,
 } from './figure'
 import { getVerticalKeyForAxisIndex, getHorizontalKeyForAxisIndex, type Tile } from './tile'
@@ -44,40 +40,40 @@ export function resetBoard(board: Board): void {
   clearBoard(board)
 
   // White Figures
-  board['a1'] = WhiteRookFigure
-  board['b1'] = WhiteKnightFigure
-  board['c1'] = WhiteBishopFigure
-  board['d1'] = WhiteKingFigure
-  board['e1'] = WhiteQueenFigure
-  board['f1'] = WhiteBishopFigure
-  board['g1'] = WhiteKnightFigure
-  board['h1'] = WhiteRookFigure
+  board['a1'] = WhiteFigure | RookFigure
+  board['b1'] = WhiteFigure | KnightFigure
+  board['c1'] = WhiteFigure | BishopFigure
+  board['d1'] = WhiteFigure | KingFigure
+  board['e1'] = WhiteFigure | QueenFigure
+  board['f1'] = WhiteFigure | BishopFigure
+  board['g1'] = WhiteFigure | KnightFigure
+  board['h1'] = WhiteFigure | RookFigure
   // White Pawns
-  board['a2'] = WhitePawnFigure
-  board['b2'] = WhitePawnFigure
-  board['c2'] = WhitePawnFigure
-  board['d2'] = WhitePawnFigure
-  board['e2'] = WhitePawnFigure
-  board['f2'] = WhitePawnFigure
-  board['g2'] = WhitePawnFigure
-  board['h2'] = WhitePawnFigure
+  board['a2'] = WhiteFigure | PawnFigure
+  board['b2'] = WhiteFigure | PawnFigure
+  board['c2'] = WhiteFigure | PawnFigure
+  board['d2'] = WhiteFigure | PawnFigure
+  board['e2'] = WhiteFigure | PawnFigure
+  board['f2'] = WhiteFigure | PawnFigure
+  board['g2'] = WhiteFigure | PawnFigure
+  board['h2'] = WhiteFigure | PawnFigure
 
   // Black Figures
-  board['a8'] = BlackRookFigure
-  board['b8'] = BlackKnightFigure
-  board['c8'] = BlackBishopFigure
-  board['d8'] = BlackKingFigure
-  board['e8'] = BlackQueenFigure
-  board['f8'] = BlackBishopFigure
-  board['g8'] = BlackKnightFigure
-  board['h8'] = BlackRookFigure
+  board['a8'] = BlackFigure | RookFigure
+  board['b8'] = BlackFigure | KnightFigure
+  board['c8'] = BlackFigure | BishopFigure
+  board['d8'] = BlackFigure | KingFigure
+  board['e8'] = BlackFigure | QueenFigure
+  board['f8'] = BlackFigure | BishopFigure
+  board['g8'] = BlackFigure | KnightFigure
+  board['h8'] = BlackFigure | RookFigure
   // Black Pawns
-  board['a7'] = BlackPawnFigure
-  board['b7'] = BlackPawnFigure
-  board['c7'] = BlackPawnFigure
-  board['d7'] = BlackPawnFigure
-  board['e7'] = BlackPawnFigure
-  board['f7'] = BlackPawnFigure
-  board['g7'] = BlackPawnFigure
-  board['h7'] = BlackPawnFigure
+  board['a7'] = BlackFigure | PawnFigure
+  board['b7'] = BlackFigure | PawnFigure
+  board['c7'] = BlackFigure | PawnFigure
+  board['d7'] = BlackFigure | PawnFigure
+  board['e7'] = BlackFigure | PawnFigure
+  board['f7'] = BlackFigure | PawnFigure
+  board['g7'] = BlackFigure | PawnFigure
+  board['h7'] = BlackFigure | PawnFigure
 }
