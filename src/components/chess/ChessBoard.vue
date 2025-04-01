@@ -1,6 +1,12 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { getAxisIndicesForTile, HorizontalKeys, VerticalKeys, type Tile } from '@/chess/tile'
+import { ref, type Ref } from 'vue'
+import {
+  getAxisIndicesForTile,
+  HorizontalKeys,
+  isTile,
+  VerticalKeys,
+  type Tile,
+} from '@/chess/tile'
 import { type Board } from '@/chess/board'
 import {
   getFigureDesciption,
@@ -15,6 +21,9 @@ import {
   type Figure,
 } from '@/chess/figure'
 
+const emit = defineEmits<{
+  (event: 'move', from: Tile, to: Tile): void
+}>()
 const props = defineProps<{
   board: Board
 }>()
@@ -54,6 +63,31 @@ function getFigureType(
   }
   return 'invalid'
 }
+
+const draggedTile: Ref<Tile | null> = ref(null)
+
+function handleDragStart(event: DragEvent, tile: Tile) {
+  if (!isTile(tile)) return
+  draggedTile.value = tile
+}
+
+function handleDrop(event: DragEvent, tile: Tile) {
+  if (draggedTile.value === null) return
+  if (!isTile(tile)) return
+  if (draggedTile.value === tile) return
+  emit('move', draggedTile.value, tile)
+  draggedTile.value = null
+}
+
+function handleDragEnter(event: DragEvent, tile: Tile) {
+  if (draggedTile.value === null) return
+  if (!isTile(tile)) return
+}
+
+function handleDragLeave(event: DragEvent, tile: Tile) {
+  if (draggedTile.value === null) return
+  if (!isTile(tile)) return
+}
 </script>
 
 <template>
@@ -77,12 +111,18 @@ function getFigureType(
         :key="tile"
         :class="['chess-board-tile', getTileColor(tile)]"
         :id="tile"
+        @drop="handleDrop($event, tile)"
+        @dragenter="handleDragEnter($event, tile)"
+        @dragleave="handleDragLeave($event, tile)"
+        @dragover.prevent
       >
         <div class="chess-board-tile-label">{{ tile }}</div>
         <div
           v-if="figure !== 0"
           :class="['chess-board-figure', getFigureColor(figure), getFigureType(figure)]"
           :title="getFigureDesciption(figure)"
+          draggable="true"
+          @dragstart="handleDragStart($event, tile)"
         />
       </div>
     </section>
