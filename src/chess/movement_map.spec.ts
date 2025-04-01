@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
   isMovementMap,
-  createEmptyMovementMap,
-  createMovementMap,
   shrinkMovementMapForBoard,
   getMovementMapForFigure,
   KingMovementMap,
@@ -17,7 +15,6 @@ import {
   EmptyMovementMap,
 } from './movement_map'
 import * as Moves from './moves'
-import * as Directions from './directions'
 import {
   BlackFigure,
   WhiteFigure,
@@ -70,7 +67,6 @@ const testKingMovementMap = [
 describe('isMovementMap', () => {
   it('returns true for valid MovementMaps', () => {
     expect(isMovementMap(testEmptyMovementMap)).toBe(true)
-    expect(isMovementMap(createEmptyMovementMap())).toBe(true)
     expect(isMovementMap(testKingMovementMap)).toBe(true)
     expect(isMovementMap(BlackPawnFirstMoveMovementMap)).toBe(true)
     expect(isMovementMap(BlackPawnMovementMap)).toBe(true)
@@ -91,116 +87,6 @@ describe('isMovementMap', () => {
     expect(isMovementMap([])).toBe(false)
     expect(isMovementMap([[]])).toBe(false)
     expect(isMovementMap([[], [], [], [], [], [], [], [], [], [], [], [], [], [], []])).toBe(false)
-  })
-})
-
-describe('createEmptyMovementMap', () => {
-  it('returns a MovementMap filled with zeros', () => {
-    expect(testEmptyMovementMap).toEqual(testEmptyMovementMap)
-    expect(createEmptyMovementMap()).toEqual(testEmptyMovementMap)
-    expect(createEmptyMovementMap()).toEqual(createEmptyMovementMap())
-  })
-})
-
-describe('createMovementMap', () => {
-  it('returns a MovementMap with the correct directions and moves', () => {
-    expect(createMovementMap(Directions.None, Moves.None)).toEqual(testEmptyMovementMap)
-
-    let map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-    Object.values(Moves).forEach((move) => {
-      // Direction Up
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[0][7] = move
-      map[1][7] = move
-      map[2][7] = move
-      map[3][7] = move
-      map[4][7] = move
-      map[5][7] = move
-      map[6][7] = move
-      expect(createMovementMap(Directions.Up, move), 'Directions.Up').toEqual(map)
-      // Direction Down
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[8][7] = move
-      map[9][7] = move
-      map[10][7] = move
-      map[11][7] = move
-      map[12][7] = move
-      map[13][7] = move
-      map[14][7] = move
-      expect(createMovementMap(Directions.Down, move), 'Directions.Down').toEqual(map)
-      // Direction Left
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[7][0] = move
-      map[7][1] = move
-      map[7][2] = move
-      map[7][3] = move
-      map[7][4] = move
-      map[7][5] = move
-      map[7][6] = move
-      expect(createMovementMap(Directions.Left, move), 'Directions.Left').toEqual(map)
-      // Direction Right
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[7][8] = move
-      map[7][9] = move
-      map[7][10] = move
-      map[7][11] = move
-      map[7][12] = move
-      map[7][13] = move
-      map[7][14] = move
-      expect(createMovementMap(Directions.Right, move), 'Directions.Right').toEqual(map)
-      // Direction DiagonalUpLeft
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[0][0] = move
-      map[1][1] = move
-      map[2][2] = move
-      map[3][3] = move
-      map[4][4] = move
-      map[5][5] = move
-      map[6][6] = move
-      expect(
-        createMovementMap(Directions.DiagonalUpLeft, move),
-        'Directions.DiagonalUpLeft',
-      ).toEqual(map)
-      // Direction DiagonalUpRight
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[0][14] = move
-      map[1][13] = move
-      map[2][12] = move
-      map[3][11] = move
-      map[4][10] = move
-      map[5][9] = move
-      map[6][8] = move
-      expect(
-        createMovementMap(Directions.DiagonalUpRight, move),
-        'Directions.DiagonalUpRight',
-      ).toEqual(map)
-      // Direction DiagonalDownLeft
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[8][6] = move
-      map[9][5] = move
-      map[10][4] = move
-      map[11][3] = move
-      map[12][2] = move
-      map[13][1] = move
-      map[14][0] = move
-      expect(
-        createMovementMap(Directions.DiagonalDownLeft, move),
-        'Directions.DiagonalDownLeft',
-      ).toEqual(map)
-      // Direction DiagonalDownRight
-      map = JSON.parse(JSON.stringify(testEmptyMovementMap))
-      map[8][8] = move
-      map[9][9] = move
-      map[10][10] = move
-      map[11][11] = move
-      map[12][12] = move
-      map[13][13] = move
-      map[14][14] = move
-      expect(
-        createMovementMap(Directions.DiagonalDownRight, move),
-        'Directions.DiagonalDownRight',
-      ).toEqual(map)
-    })
   })
 })
 
