@@ -142,7 +142,6 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
   border-radius: var(--header-size);
 
   aspect-ratio: 1 / 1;
-  max-height: 640px;
 }
 
 .chess-board-tiles {

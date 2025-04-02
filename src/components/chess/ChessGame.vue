@@ -76,5 +76,18 @@ function endPromotion(newFigure: Figure) {
 <style lang="scss" scoped>
 .chess-game {
   position: relative; // make promotion dialog overlay chess-game container
+  width: 100%;
+  @media screen and (min-width: 640px) {
+    width: 480px;
+  }
+  @media screen and (min-width: 768px) {
+    width: 640px;
+  }
+  @media screen and (min-width: 1024px) {
+    width: 768px;
+  }
+  @media screen and (min-width: 1280px) {
+    width: 1024px;
+  }
 }
 </style>

@@ -8,11 +8,7 @@ import ChessGame from '@/components/chess/ChessGame.vue'
       <h2>Chess View</h2>
     </header>
 
-    <section class="game">
-      <ChessGame />
-    </section>
-
-    <section class="stats"></section>
+    <ChessGame />
   </main>
 </template>
 
@@ -21,5 +17,9 @@ main {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.chess-game {
+  margin: 0 auto;
 }
 </style>
