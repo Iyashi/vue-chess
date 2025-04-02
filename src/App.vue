@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import pkg from '../package.json'
 import { RouterLink, RouterView } from 'vue-router'
 </script>
 
@@ -16,6 +17,11 @@ import { RouterLink, RouterView } from 'vue-router'
   </header>
 
   <RouterView />
+
+  <footer>
+    <p>&copy; 2025 Jannik Lohaus</p>
+    <p>Source at <a :href="pkg.repository.url" rel="noopener">GitHub</a></p>
+  </footer>
 </template>
 
 <style lang="scss" scoped>
@@ -48,5 +54,14 @@ nav {
       background-color: transparent;
     }
   }
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 </style>
