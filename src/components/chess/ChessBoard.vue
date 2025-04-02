@@ -311,7 +311,7 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
 }
 
 .chess-board-figure {
-  font-size: 3.5rem;
+  font-size: 2rem;
   user-select: none;
   z-index: 2;
 
