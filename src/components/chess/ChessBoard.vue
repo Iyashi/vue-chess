@@ -91,19 +91,17 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
   if (!moves) return []
 
   // empty tiles
-  if (!props.board[tile] && moves & Moves.JumpOnEmpty) {
-    return [canMoveClass]
-  } else if (!props.board[tile] && moves & Moves.WalkOnEmpty) {
-    // TODO: check if path is blocked by other figures
-    return [canMoveClass]
+  if (!props.board[tile]) {
+    if (moves & ((moves & Moves.WalkOnEmpty) | Moves.JumpOnEmpty)) {
+      return [canMoveClass]
+    } else {
+      return [cannotMoveClass]
+    }
   }
 
   // tiles occupied by enemy figures
   if (true === isEnemyFigure(hoverState.value.figure, props.board[tile])) {
-    if (moves & Moves.JumpOnEnemy) {
-      return [canMoveClass]
-    } else if (moves & Moves.WalkOnEnemy) {
-      // TODO: check if path is blocked by other figures
+    if (moves & (Moves.WalkOnEnemy | Moves.JumpOnEnemy)) {
       return [canMoveClass]
     } else {
       return [cannotMoveClass]
@@ -112,7 +110,11 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
 
   // tiles occupied by friendly figures
   if (false === isEnemyFigure(hoverState.value.figure, props.board[tile])) {
-    return [cannotMoveClass]
+    if (moves & (Moves.WalkOnFriend | Moves.JumpOnFriend)) {
+      return [canMoveClass]
+    } else {
+      return [cannotMoveClass]
+    }
   }
 
   return []
