@@ -130,6 +130,8 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
 </template>
 
 <style lang="scss" scoped>
+@import '@/assets/chess-font.scss';
+
 .chess-board {
   --header-size: 50px;
   --grid-template: var(--header-size) 1fr var(--header-size);
@@ -231,56 +233,16 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
   z-index: 1;
 }
 
-@font-face {
-  font-family: 'ChessMedium';
-  src: url('@/assets/chess.otf') format('opentype');
-}
-
 .chess-board-figure {
   font-size: 3.5rem;
   user-select: none;
   z-index: 2;
-  font-family: ChessMedium;
 
   &.white {
-    &.pawn::before {
-      content: 'P';
-    }
-    &.rook::before {
-      content: 'R';
-    }
-    &.knight::before {
-      content: 'N';
-    }
-    &.bishop::before {
-      content: 'L';
-    }
-    &.queen::before {
-      content: 'Q';
-    }
-    &.king::before {
-      content: 'K';
-    }
+    @include chess-figure-white;
   }
   &.black {
-    &.pawn::before {
-      content: 'p';
-    }
-    &.rook::before {
-      content: 'r';
-    }
-    &.knight::before {
-      content: 'n';
-    }
-    &.bishop::before {
-      content: 'l';
-    }
-    &.queen::before {
-      content: 'q';
-    }
-    &.king::before {
-      content: 'k';
-    }
+    @include chess-figure-black;
   }
 }
 </style>

@@ -76,10 +76,7 @@ function promote(newFigure: Figure) {
 </template>
 
 <style lang="scss" scoped>
-@font-face {
-  font-family: 'ChessMedium';
-  src: url('@/assets/chess.otf') format('opentype');
-}
+@import '@/assets/chess-font.scss';
 
 .promotion-dialog-container {
   position: absolute;
@@ -129,37 +126,14 @@ function promote(newFigure: Figure) {
   }
 
   button {
-    font-family: ChessMedium;
     font-size: 3.5rem;
     padding: 10px;
 
     &.white {
-      &.rook::before {
-        content: 'R';
-      }
-      &.knight::before {
-        content: 'N';
-      }
-      &.bishop::before {
-        content: 'L';
-      }
-      &.queen::before {
-        content: 'Q';
-      }
+      @include chess-figure-white;
     }
     &.black {
-      &.rook::before {
-        content: 'r';
-      }
-      &.knight::before {
-        content: 'n';
-      }
-      &.bishop::before {
-        content: 'l';
-      }
-      &.queen::before {
-        content: 'q';
-      }
+      @include chess-figure-black;
     }
   }
 }
