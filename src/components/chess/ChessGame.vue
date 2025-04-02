@@ -8,11 +8,7 @@ import {
   isWhiteFigure,
   isPawnFigure,
   isEnemyFigure,
-  isRookFigure,
-  isKnightFigure,
-  isBishopFigure,
-  isQueenFigure,
-  isKingFigure,
+  getFigureKind,
   getFigureDesciption,
   type Figure,
 } from '@/chess/figure'
@@ -96,25 +92,6 @@ function endPromotion(newFigure: Figure) {
   promotion.value = null
 }
 
-function getFigureType(
-  figure: Figure,
-): 'pawn' | 'rook' | 'bishop' | 'knight' | 'queen' | 'king' | 'invalid' {
-  if (isPawnFigure(figure)) {
-    return 'pawn'
-  } else if (isRookFigure(figure)) {
-    return 'rook'
-  } else if (isKnightFigure(figure)) {
-    return 'knight'
-  } else if (isBishopFigure(figure)) {
-    return 'bishop'
-  } else if (isQueenFigure(figure)) {
-    return 'queen'
-  } else if (isKingFigure(figure)) {
-    return 'king'
-  }
-  return 'invalid'
-}
-
 function resetGame() {
   if (confirm('Are you sure you want to reset the game?')) {
     resetBoard(board.value)
@@ -138,7 +115,7 @@ function resetGame() {
         <ul>
           <li v-for="(figure, index) in blackCaptures" :key="index">
             <span
-              :class="['chess-figure white', getFigureType(figure)]"
+              :class="['chess-figure white', getFigureKind(figure)]"
               :title="getFigureDesciption(figure)"
             />
           </li>
@@ -149,7 +126,7 @@ function resetGame() {
         <ul>
           <li v-for="(figure, index) in whiteCaptures" :key="index">
             <span
-              :class="['chess-figure black', getFigureType(figure)]"
+              :class="['chess-figure black', getFigureKind(figure)]"
               :title="getFigureDesciption(figure)"
             />
           </li>

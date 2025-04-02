@@ -12,12 +12,7 @@ import {
   getFigureDesciption,
   isBlackFigure,
   isEnemyFigure,
-  isPawnFigure,
-  isRookFigure,
-  isKnightFigure,
-  isBishopFigure,
-  isQueenFigure,
-  isKingFigure,
+  getFigureKind,
   type Figure,
 } from '@/chess/figure'
 import { calculateMovementPaths, type MovementMap } from '@/chess/movement_map'
@@ -38,25 +33,7 @@ function getTileColor(tile: Tile): 'black' | 'white' {
   return (x + y) % 2 === 1 ? 'black' : 'white'
 }
 
-function getFigureType(
-  figure: Figure,
-): 'pawn' | 'rook' | 'bishop' | 'knight' | 'queen' | 'king' | 'invalid' {
-  if (isPawnFigure(figure)) {
-    return 'pawn'
-  } else if (isRookFigure(figure)) {
-    return 'rook'
-  } else if (isKnightFigure(figure)) {
-    return 'knight'
-  } else if (isBishopFigure(figure)) {
-    return 'bishop'
-  } else if (isQueenFigure(figure)) {
-    return 'queen'
-  } else if (isKingFigure(figure)) {
-    return 'king'
-  }
-  return 'invalid'
-}
-
+// drag and drop a figure
 const draggedTile: Ref<Tile | null> = ref(null)
 
 function handleDragStart(event: DragEvent, tile: Tile) {
@@ -82,6 +59,7 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
   if (!isTile(tile)) return
 }
 
+// hovering a figure
 // TODO: maybe make composable of this?
 const hoverState: Ref<{
   tile: Tile
@@ -177,7 +155,7 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
           :class="[
             'chess-board-figure',
             isBlackFigure(figure) ? 'black' : 'white',
-            getFigureType(figure),
+            getFigureKind(figure),
           ]"
           :title="`${getFigureDesciption(figure)} on ${tile}`"
           draggable="true"

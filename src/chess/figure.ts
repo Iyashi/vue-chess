@@ -78,6 +78,25 @@ export function hasFigureMoved(v: unknown): v is typeof MovedOnce {
   return typeof v === 'number' && (v & MovedOnce) === MovedOnce
 }
 
+export function getFigureKind(
+  figure: Figure,
+): 'pawn' | 'rook' | 'bishop' | 'knight' | 'queen' | 'king' | 'invalid' {
+  if (isPawnFigure(figure)) {
+    return 'pawn'
+  } else if (isRookFigure(figure)) {
+    return 'rook'
+  } else if (isKnightFigure(figure)) {
+    return 'knight'
+  } else if (isBishopFigure(figure)) {
+    return 'bishop'
+  } else if (isQueenFigure(figure)) {
+    return 'queen'
+  } else if (isKingFigure(figure)) {
+    return 'king'
+  }
+  return 'invalid'
+}
+
 export function getFigureDesciption(figure: Figure): string {
   if (typeof figure !== 'number' || figure < 0) return 'Invalid'
 

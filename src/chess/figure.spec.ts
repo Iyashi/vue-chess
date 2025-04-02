@@ -20,6 +20,7 @@ import {
   isBlackFigure,
   isWhiteFigure,
   isEnemyFigure,
+  getFigureKind,
   getFigureDesciption,
   MovedOnce,
   hasFigureMoved,
@@ -413,6 +414,69 @@ describe('hasFigureMoved', () => {
   it('should return false for any valid figure which did not move yet', () => {
     expect(fn(BlackFigure | PawnFigure)).toBe(false)
     expect(fn(WhiteFigure | PawnFigure)).toBe(false)
+  })
+})
+
+describe('getFigureKind', () => {
+  it('should return pawn for any valid pawn figure', () => {
+    expect(getFigureKind(PawnFigure)).toBe('pawn')
+    expect(getFigureKind(PawnFigure | MovedOnce)).toBe('pawn')
+    expect(getFigureKind(BlackFigure | PawnFigure)).toBe('pawn')
+    expect(getFigureKind(BlackFigure | PawnFigure | MovedOnce)).toBe('pawn')
+    expect(getFigureKind(WhiteFigure | PawnFigure)).toBe('pawn')
+    expect(getFigureKind(WhiteFigure | PawnFigure | MovedOnce)).toBe('pawn')
+  })
+  it('should return rook for any valid rook figure', () => {
+    expect(getFigureKind(RookFigure)).toBe('rook')
+    expect(getFigureKind(RookFigure | MovedOnce)).toBe('rook')
+    expect(getFigureKind(BlackFigure | RookFigure)).toBe('rook')
+    expect(getFigureKind(BlackFigure | RookFigure | MovedOnce)).toBe('rook')
+    expect(getFigureKind(BlackFigure | RookFigure | PromotedFigure)).toBe('rook')
+    expect(getFigureKind(WhiteFigure | RookFigure)).toBe('rook')
+    expect(getFigureKind(WhiteFigure | RookFigure | MovedOnce)).toBe('rook')
+    expect(getFigureKind(WhiteFigure | RookFigure | PromotedFigure)).toBe('rook')
+  })
+  it('should return knight for any valid knight figure', () => {
+    expect(getFigureKind(KnightFigure)).toBe('knight')
+    expect(getFigureKind(KnightFigure | MovedOnce)).toBe('knight')
+    expect(getFigureKind(BlackFigure | KnightFigure)).toBe('knight')
+    expect(getFigureKind(BlackFigure | KnightFigure | MovedOnce)).toBe('knight')
+    expect(getFigureKind(BlackFigure | KnightFigure | MovedOnce)).toBe('knight')
+    expect(getFigureKind(WhiteFigure | KnightFigure)).toBe('knight')
+    expect(getFigureKind(WhiteFigure | KnightFigure | MovedOnce)).toBe('knight')
+    expect(getFigureKind(WhiteFigure | KnightFigure | PromotedFigure)).toBe('knight')
+  })
+  it('should return bishop for any valid bishop figure', () => {
+    expect(getFigureKind(BishopFigure)).toBe('bishop')
+    expect(getFigureKind(BishopFigure | MovedOnce)).toBe('bishop')
+    expect(getFigureKind(BlackFigure | BishopFigure)).toBe('bishop')
+    expect(getFigureKind(BlackFigure | BishopFigure | MovedOnce)).toBe('bishop')
+    expect(getFigureKind(BlackFigure | BishopFigure | PromotedFigure)).toBe('bishop')
+    expect(getFigureKind(WhiteFigure | BishopFigure)).toBe('bishop')
+    expect(getFigureKind(WhiteFigure | BishopFigure | MovedOnce)).toBe('bishop')
+    expect(getFigureKind(WhiteFigure | BishopFigure | PromotedFigure)).toBe('bishop')
+  })
+  it('should return queen for any valid queen figure', () => {
+    expect(getFigureKind(QueenFigure)).toBe('queen')
+    expect(getFigureKind(QueenFigure | MovedOnce)).toBe('queen')
+    expect(getFigureKind(BlackFigure | QueenFigure)).toBe('queen')
+    expect(getFigureKind(BlackFigure | QueenFigure | MovedOnce)).toBe('queen')
+    expect(getFigureKind(BlackFigure | QueenFigure | PromotedFigure)).toBe('queen')
+    expect(getFigureKind(WhiteFigure | QueenFigure)).toBe('queen')
+    expect(getFigureKind(WhiteFigure | QueenFigure | MovedOnce)).toBe('queen')
+    expect(getFigureKind(WhiteFigure | QueenFigure | PromotedFigure)).toBe('queen')
+  })
+  it('should return king for any valid king figure', () => {
+    expect(getFigureKind(KingFigure)).toBe('king')
+    expect(getFigureKind(KingFigure | MovedOnce)).toBe('king')
+    expect(getFigureKind(BlackFigure | KingFigure)).toBe('king')
+    expect(getFigureKind(BlackFigure | KingFigure | MovedOnce)).toBe('king')
+    expect(getFigureKind(WhiteFigure | KingFigure)).toBe('king')
+    expect(getFigureKind(WhiteFigure | KingFigure | MovedOnce)).toBe('king')
+  })
+  it('should return invalid for any invalid figure', () => {
+    expect(getFigureKind(BlackFigure)).toBe('invalid')
+    expect(getFigureKind(WhiteFigure)).toBe('invalid')
   })
 })
 
