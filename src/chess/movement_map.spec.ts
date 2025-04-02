@@ -1,18 +1,19 @@
 import { describe, it, expect } from 'vitest'
 import {
   isMovementMap,
-  getPositionalMovementMapSlice,
   getFigureMovementMap,
-  KingMovementMap,
-  QueenMovementMap,
+  getPositionalMovementMapSlice,
+  calculateMovementPaths,
+  EmptyMovementMap,
   BlackPawnFirstMoveMovementMap,
   BlackPawnMovementMap,
-  WhitePawnMovementMap,
   WhitePawnFirstMoveMovementMap,
+  WhitePawnMovementMap,
   RookMovementMap,
   KnightMovementMap,
   BishopMovementMap,
-  EmptyMovementMap,
+  QueenMovementMap,
+  KingMovementMap,
 } from './movement_map'
 import * as Moves from './moves'
 import {
@@ -26,6 +27,7 @@ import {
   QueenFigure,
   KingFigure,
 } from './figure'
+import { createEmptyBoard } from './board'
 
 const testEmptyMovementMap = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -246,4 +248,16 @@ describe('getFigureMovementMap', () => {
     expect(fn(WhiteFigure)).toEqual(EmptyMovementMap)
     expect(fn(BlackFigure)).toEqual(EmptyMovementMap)
   })
+})
+
+describe('calculateMovementPaths', () => {
+  it('should calculate the correct movement paths for a given tile on an empty board', () => {
+    const board = createEmptyBoard()
+    expect(calculateMovementPaths(board, 'a1')).toEqual(
+      getPositionalMovementMapSlice(EmptyMovementMap, 0, 0),
+    )
+  })
+
+  // TODO: make elaborate tests for different scenarios and edge cases
+  // urgh.. this will be messy
 })

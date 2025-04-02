@@ -1,16 +1,19 @@
 import * as Moves from './moves'
 import {
-  hasFigureMoved,
-  isBishopFigure,
   isBlackFigure,
   isWhiteFigure,
-  isKingFigure,
-  isKnightFigure,
+  isEnemyFigure,
   isPawnFigure,
-  isQueenFigure,
   isRookFigure,
+  isKnightFigure,
+  isBishopFigure,
+  isQueenFigure,
+  isKingFigure,
+  hasFigureMoved,
   type Figure,
 } from './figure'
+import { getAxisIndicesForTile, getTileForAxisIndices, type Tile } from './tile'
+import type { Board } from './board'
 
 /**
  * MovementMap is a 2D array of all possible moves for a figure on a chessboard.
@@ -294,6 +297,230 @@ export function getFigureMovementMap(figure: Figure): MovementMap {
  */
 export function getPositionalMovementMapSlice(map: MovementMap, x: number, y: number) {
   return map.slice(7 - y, 7 - y + 8).map(($) => $.slice(7 - x, 7 - x + 8))
+}
+
+/**
+ * Returns a slice of `MovementMap` for the figure on the given tile on the the given chessboard.
+ *
+ * The slice will be 8*8, same as chessboard size and can be directly applied to it. For example to indicate wether a figure can move to a tile or not.
+ *
+ * @param {Board} board The chessboard state
+ * @param {Tile} tile The tile of the `Figure` on chessboard
+ * @returns 8*8 `MovementMap` with all tiles marked where the figure on given tile can move to
+ */
+export function calculateMovementPaths(board: Board, tile: Tile): MovementMap {
+  const figure = board[tile]
+  const [x, y] = getAxisIndicesForTile(tile)
+
+  if (!figure) return getPositionalMovementMapSlice(EmptyMovementMap, x, y) // no figure on tile
+
+  const movementMap = getFigureMovementMap(figure)
+  const movementMapSlice = getPositionalMovementMapSlice(movementMap, x, y)
+
+  const result: MovementMap = new Array(8).fill([]).map(() => new Array(8).fill(Moves.None))
+
+  // Jump
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      const t = getTileForAxisIndices(x, y)
+      const m = movementMapSlice[y][x]
+      if (m & Moves.JumpOnEmpty && !board[t]) {
+        result[y][x] = Moves.JumpOnEmpty // can jump on empty tile
+      } else if (m & Moves.JumpOnEnemy && true === isEnemyFigure(figure, board[t])) {
+        result[y][x] = Moves.JumpOnEnemy // can jump on enemy tile
+      } else if (m & Moves.JumpOnFriend && false === isEnemyFigure(figure, board[t])) {
+        result[y][x] = Moves.JumpOnFriend // can jump on friendly tile
+      }
+    }
+  }
+
+  // from the figure's position, move towards each direction and stop when encountering an occupied tile
+  // set the result map at the position of the occupied tile to `Moves.WalkOnEnemy` or `Moves.WalkOnEmpty` respectively
+
+  // Walk up
+  for (let i = y - 1; i >= 0; i--) {
+    const m = movementMapSlice[i][x]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(x, i)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[i][x] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[i][x] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // Walk down
+  for (let i = y + 1; i <= 7; i++) {
+    const m = movementMapSlice[i][x]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(x, i)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[i][x] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[i][x] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // Walk left
+  for (let i = x - 1; i >= 0; i--) {
+    const m = movementMapSlice[y][i]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(i, y)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[y][i] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[y][i] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // Walk right
+  for (let i = x + 1; i <= 7; i++) {
+    const m = movementMapSlice[y][i]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(i, y)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[y][i] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[y][i] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // Walk diagonally up-left
+  for (let ix = x - 1, iy = y - 1; ix >= 0 && iy >= 0; ix--, iy--) {
+    const m = movementMapSlice[iy][ix]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(ix, iy)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[iy][ix] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[iy][ix] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // Walk diagonally up-right
+  for (let ix = x + 1, iy = y - 1; ix <= 7 && iy >= 0; ix++, iy--) {
+    const m = movementMapSlice[iy][ix]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(ix, iy)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[iy][ix] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[iy][ix] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // Walk diagonally down-left
+  for (let ix = x - 1, iy = y + 1; ix >= 0 && iy <= 7; ix--, iy++) {
+    const m = movementMapSlice[iy][ix]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(ix, iy)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[iy][ix] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[iy][ix] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // Walk diagonally down-right
+  for (let ix = x + 1, iy = y + 1; ix <= 7 && iy <= 7; ix++, iy++) {
+    const m = movementMapSlice[iy][ix]
+    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
+    const t = getTileForAxisIndices(ix, iy)
+    if (m & Moves.WalkOnEnemy && true === isEnemyFigure(figure, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[iy][ix] |= Moves.WalkOnEnemy
+      break
+    } else if (m & Moves.WalkOnFriend && false === isEnemyFigure(figure, board[t])) {
+      // friend encounted, disallow move to friendly tile and stop going further
+      break
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile
+      result[iy][ix] |= Moves.WalkOnEmpty
+    } else if (board[t]) {
+      // stop going further if a figure is encountered
+      break
+    }
+  }
+
+  // TODO: Checkmate detection. Disallow king to move where it can be captured or blocked by an opponent's figure.
+
+  // TODO: Stalemate detection. Stalemate is a situation where the player has no legal moves and cannot capture or block an opponent's figure.
+
+  // TODO: Castling. Castling is a special case where the king moves two squares and the rook moves one square.
+  // It is only possible when the king has not moved and neither of the rooks have moved. The king cannot be in check after castling.
+
+  // console.log(
+  //   'movementMapSlice\n',
+  //   movementMapSlice.map((row) => row.map((cell) => (cell ? 'x' : '.')).join('')).join('\n '),
+  // )
+  // console.log(
+  //   'result\n',
+  //   result.map((row) => row.map((cell) => (cell ? 'x' : '.')).join('')).join('\n '),
+  // )
+  return result
 }
 
 // export function stringifyMovementMap(movementMap: MovementMap): string {
