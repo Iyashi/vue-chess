@@ -22,7 +22,7 @@ import {
   isEnemyFigure,
   getFigureDesciption,
   MovedOnce,
-  hasMovedOnce,
+  hasFigureMoved,
   BaseFigures,
 } from './figure'
 
@@ -404,8 +404,8 @@ describe('isEnemyFigure', () => {
   })
 })
 
-describe('hasMovedOnce', () => {
-  const fn = hasMovedOnce
+describe('hasFigureMoved', () => {
+  const fn = hasFigureMoved
   it('should return true for any valid figure which moved once', () => {
     expect(fn(BlackFigure | PawnFigure | MovedOnce)).toBe(true)
     expect(fn(WhiteFigure | PawnFigure | MovedOnce)).toBe(true)

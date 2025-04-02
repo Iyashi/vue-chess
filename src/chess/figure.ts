@@ -74,7 +74,7 @@ export type Figure = typeof Figures
 
 /* prettier-ignore */ export const MovedOnce = 0b1000000000
 
-export function hasMovedOnce(v: unknown): v is typeof MovedOnce {
+export function hasFigureMoved(v: unknown): v is typeof MovedOnce {
   return typeof v === 'number' && (v & MovedOnce) === MovedOnce
 }
 
