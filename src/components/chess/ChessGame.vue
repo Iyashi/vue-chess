@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { createBoard, resetBoard } from '@/chess/board'
-import { getAxisIndicesForTile, type Tile } from '@/chess/tile'
+import { getAxisIndicesForTile, getIndexForVerticalKey, type Tile } from '@/chess/tile'
 import {
   MovedOnce,
   isBlackFigure,
@@ -11,6 +11,7 @@ import {
   getFigureKind,
   getFigureDesciption,
   type Figure,
+  isKingFigure,
 } from '@/chess/figure'
 import { calculateMovementPaths } from '@/chess/movement_map'
 import * as Moves from '@/chess/moves'
@@ -23,58 +24,75 @@ const turnCount = ref(1)
 const blackCaptures = ref<Figure[]>([])
 const whiteCaptures = ref<Figure[]>([])
 
-function handleMove(fromTile: Tile, toTile: Tile) {
-  if (fromTile === toTile) return // cannot move to same tile
+function handleMove(fromTile: Tile, toTile: Tile): void {
+  if (canFigureMove(fromTile, toTile)) {
+    moveFigure(fromTile, toTile)
+  }
+}
 
+function canFigureMove(fromTile: Tile, toTile: Tile): boolean {
+  if (fromTile === toTile) return false // cannot move to same tile
+
+  const movingFigure = board.value[fromTile]
+  const targetFigure = board.value[toTile]
+
+  // check if the player is active
+  if (activePlayer.value !== 'black' && isBlackFigure(movingFigure)) return false
+  if (activePlayer.value !== 'white' && isWhiteFigure(movingFigure)) return false
+
+  // check if the move is valid
+  const movementPaths = calculateMovementPaths(board.value, fromTile)
+  const [toX, toY] = getAxisIndicesForTile(toTile)
+
+  // if allowed, move figure to empty target tile
+  if (movementPaths[toY][toX] & (Moves.WalkOnEmpty | Moves.JumpOnEmpty) && !targetFigure) {
+    return true
+  }
+
+  // if allowed, capture enemy figure at target tile and move figure to target tile
+  if (
+    movementPaths[toY][toX] & (Moves.WalkOnEnemy | Moves.JumpOnEnemy) &&
+    true === isEnemyFigure(movingFigure, targetFigure)
+  ) {
+    return true
+  }
+
+  // if allowed, move figure to friendly tile
+  if (
+    movementPaths[toY][toX] & (Moves.WalkOnFriend | Moves.JumpOnFriend) &&
+    false === isEnemyFigure(movingFigure, targetFigure)
+  ) {
+    return true
+  }
+
+  return false
+}
+
+function moveFigure(fromTile: Tile, toTile: Tile) {
   let movingFigure = board.value[fromTile]
   const targetFigure = board.value[toTile]
 
-  if (activePlayer.value !== 'black' && isBlackFigure(movingFigure)) return
-  if (activePlayer.value !== 'white' && isWhiteFigure(movingFigure)) return
+  // update tiles / move figure
+  board.value[fromTile] = 0
+  board.value[toTile] = movingFigure = movingFigure | MovedOnce
 
-  const movementPaths = calculateMovementPaths(board.value, fromTile)
-  const [toX, toY] = getAxisIndicesForTile(toTile)
-  let shouldMove = false
-  if (movementPaths[toY][toX]) {
-    if (movementPaths[toY][toX] & (Moves.WalkOnEmpty | Moves.JumpOnEmpty) && !targetFigure) {
-      shouldMove = true // move figure to empty target tile
-    } else if (
-      movementPaths[toY][toX] & (Moves.WalkOnEnemy | Moves.JumpOnEnemy) &&
-      true === isEnemyFigure(movingFigure, targetFigure)
-    ) {
-      shouldMove = true // capture enemy figure at target tile and move figure to target tile
-    } else if (
-      movementPaths[toY][toX] & (Moves.WalkOnFriend | Moves.JumpOnFriend) &&
-      false === isEnemyFigure(movingFigure, targetFigure)
-    ) {
-      shouldMove = true // move figure to friendly tile
-      // TODO: Handle special cases when moving on friendly tiles (for example Castling)
+  // update captures array
+  if (targetFigure) {
+    if (isBlackFigure(movingFigure)) {
+      blackCaptures.value.push(targetFigure)
+    } else {
+      whiteCaptures.value.push(targetFigure)
     }
   }
+
+  // update other game state
+  activePlayer.value = isBlackFigure(movingFigure) ? 'white' : 'black'
+  turnCount.value++
 
   // start pawn promotion if a pawn reaches the end of the board
+  const toY = getIndexForVerticalKey(toTile)
   if (isPawnFigure(movingFigure) && (toY === 0 || toY == 7)) {
     startPromotion(toTile, movingFigure)
-  }
-
-  // update game state
-  if (shouldMove) {
-    // update tiles / move figure
-    board.value[fromTile] = 0
-    board.value[toTile] = movingFigure = movingFigure | MovedOnce
-
-    // update captures array
-    if (targetFigure) {
-      if (isBlackFigure(movingFigure)) {
-        blackCaptures.value.push(targetFigure)
-      } else {
-        whiteCaptures.value.push(targetFigure)
-      }
-    }
-
-    // update other game state
-    activePlayer.value = isBlackFigure(movingFigure) ? 'white' : 'black'
-    turnCount.value++
   }
 }
 
