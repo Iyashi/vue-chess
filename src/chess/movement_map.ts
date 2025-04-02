@@ -263,10 +263,10 @@ export const KingMovementMap = [
  */
 export function getFigureMovementMap(figure: Figure): MovementMap {
   if (isPawnFigure(figure)) {
-    if (hasMovedOnce(figure)) {
-      return isBlackFigure(figure) ? BlackPawnMovementMap : WhitePawnMovementMap
-    }
-    return isBlackFigure(figure) ? BlackPawnFirstMoveMovementMap : WhitePawnFirstMoveMovementMap
+    if (isBlackFigure(figure))
+      return hasMovedOnce(figure) ? BlackPawnMovementMap : BlackPawnFirstMoveMovementMap
+    if (isWhiteFigure(figure))
+      return hasMovedOnce(figure) ? WhitePawnMovementMap : WhitePawnFirstMoveMovementMap
   } else if (isRookFigure(figure)) {
     return RookMovementMap
   } else if (isKnightFigure(figure)) {
