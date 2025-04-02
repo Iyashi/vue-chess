@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { createBoard, resetBoard } from '@/chess/board'
-import { getAxisIndicesForTile, getIndexForVerticalKey, type Tile } from '@/chess/tile'
 import {
+  createBoard,
+  resetBoard,
   MovedOnce,
   isBlackFigure,
   isWhiteFigure,
@@ -10,11 +10,14 @@ import {
   isEnemyFigure,
   getFigureKind,
   getFigureDesciption,
-  type Figure,
   isKingFigure,
-} from '@/chess/figure'
-import { calculateMovementPaths } from '@/chess/movement_map'
-import * as Moves from '@/chess/moves'
+  getAxisIndicesForTile,
+  getIndexForVerticalKey,
+  calculateMovementPaths,
+  Moves,
+  type Figure,
+  type Tile,
+} from '@/chess'
 import ChessBoard from '@/components/chess/ChessBoard.vue'
 import ChessPromotionDialog from '@/components/chess/ChessPromotionDialog.vue'
 

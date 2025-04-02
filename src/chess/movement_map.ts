@@ -317,7 +317,7 @@ export function calculateMovementPaths(board: Board, tile: Tile): MovementMap {
   const movementMap = getFigureMovementMap(figure)
   const movementMapSlice = getPositionalMovementMapSlice(movementMap, x, y)
 
-  const result: MovementMap = new Array(8).fill([]).map(() => new Array(8).fill(Moves.None))
+  const result: MovementMap = new Array(8).fill([]).map(() => new Array(8).fill(Moves.NoMove))
 
   // Jump
   for (let y = 0; y < 8; y++) {

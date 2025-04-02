@@ -76,11 +76,11 @@ export const JumpOnAny = JumpOnEmpty | JumpOnEnemy | JumpOnFriend
  *
  * @constant {number} AnyMove - All movement types combined
  */
-export const Any = WalkOnAny | JumpOnAny
+export const AnyMove = WalkOnAny | JumpOnAny
 
 /**
  * None of the movement types.
  *
  * @constant {number} NoMove - None of the movement types
  */
-export const None = 0b000000
+export const NoMove = 0b000000

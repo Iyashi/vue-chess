@@ -219,13 +219,13 @@ export const Diagonal = 0b11110000
  *
  * Meaning all of Horizontal, Vertical and Diagonal directions.
  *
- * @constant {number} Any - All directions combined.
+ * @constant {number} AnyDirection - All directions combined.
  */
-export const Any = 0b11111111
+export const AnyDirection = 0b11111111
 
 /**
  * None of the directions
  *
- * @constant {number} None - None of the directions.
+ * @constant {number} NoDirection - None of the directions.
  */
-export const None = 0b00000000
+export const NoDirection = 0b00000000

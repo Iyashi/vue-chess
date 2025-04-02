@@ -10,7 +10,7 @@ import {
   WhiteFigure,
   getFigureDesciption,
   type Figure,
-} from '@/chess/figure'
+} from '@/chess'
 
 const emit = defineEmits<{
   (event: 'promote', promotedFigure: Figure, oldFigure: Figure): void

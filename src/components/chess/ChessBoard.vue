@@ -1,22 +1,21 @@
 <script lang="ts" setup>
 import { ref, type Ref } from 'vue'
-import { type Board } from '@/chess/board'
-import {
-  getAxisIndicesForTile,
-  HorizontalKeys,
-  isTile,
-  VerticalKeys,
-  type Tile,
-} from '@/chess/tile'
 import {
   getFigureDesciption,
   isBlackFigure,
   isEnemyFigure,
   getFigureKind,
+  getAxisIndicesForTile,
+  HorizontalKeys,
+  isTile,
+  VerticalKeys,
+  calculateMovementPaths,
+  Moves,
+  type Board,
+  type Tile,
   type Figure,
-} from '@/chess/figure'
-import { calculateMovementPaths, type MovementMap } from '@/chess/movement_map'
-import * as Moves from '@/chess/moves'
+  type MovementMap,
+} from '@/chess'
 
 const emit = defineEmits<{
   (event: 'move', from: Tile, to: Tile): void
