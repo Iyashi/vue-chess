@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   isMovementMap,
-  shrinkMovementMapForBoard,
+  getPositionalMovementMapSlice,
   getFigureMovementMap,
   KingMovementMap,
   QueenMovementMap,
@@ -90,9 +90,9 @@ describe('isMovementMap', () => {
   })
 })
 
-describe('shrinkMovementMapForBoard', () => {
-  const fn = shrinkMovementMapForBoard
-  it('returns a shrinked MovementMap with the correct directions and moves', () => {
+describe('getPositionalMovementMapSlice', () => {
+  const fn = getPositionalMovementMapSlice
+  it('returns a positional MovementMap slice (8*8) with the correct directions and moves', () => {
     {
       // King
       const m = Moves.WalkOnEmpty | Moves.WalkOnEnemy

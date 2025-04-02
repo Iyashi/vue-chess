@@ -243,20 +243,6 @@ export const KingMovementMap = [
 ]
 
 /**
- * Shrinks given MovementMap to 8*8 for board based on given x and y positions on board.
- *
- * This allows to directly apply the MovementMap to the board. For example to indicate wether a figure can move to a tile or not.
- *
- * @param map 15*15 MovementMap of a figure
- * @param x - x position of the figure on board
- * @param y - x position of the figure on board
- * @returns 8*8 MovementMap for board
- */
-export function shrinkMovementMapForBoard(map: MovementMap, x: number, y: number) {
-  return map.slice(7 - y, 7 - y + 8).map(($) => $.slice(7 - x, 7 - x + 8))
-}
-
-/**
  * Returns the `MovementMap` for the given `Figure`.
  *
  * @param {Figure} figure The `Figure` for which to return the `MovementMap`.
@@ -293,6 +279,20 @@ export function getFigureMovementMap(figure: Figure): MovementMap {
     return KingMovementMap
   }
   return EmptyMovementMap
+}
+
+/**
+ * Returns a slice of given `MovementMap` based on given x and y positions on chessboard.
+ *
+ * The slice will be 8*8, same as chessboard size and can be directly applied to it. For example to indicate wether a figure can move to a tile or not.
+ *
+ * @param map 15*15 `MovementMap` of a `Figure`
+ * @param x x position of the `Figure` on chessboard
+ * @param y y position of the `Figure` on chessboard
+ * @returns 8*8 `MovementMap` for chessboard
+ */
+export function getPositionalMovementMapSlice(map: MovementMap, x: number, y: number) {
+  return map.slice(7 - y, 7 - y + 8).map(($) => $.slice(7 - x, 7 - x + 8))
 }
 
 // export function stringifyMovementMap(movementMap: MovementMap): string {
