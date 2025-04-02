@@ -55,6 +55,15 @@ export function isWhiteFigure(v: unknown): v is typeof WhiteFigure {
   return isFigure(v) && (v & WhiteFigure) === WhiteFigure
 }
 
+export function isEnemyFigure(figure: Figure, target: Figure): boolean | null {
+  if (isBlackFigure(figure)) {
+    return isWhiteFigure(target)
+  } else if (isWhiteFigure(figure)) {
+    return isBlackFigure(target)
+  }
+  return null
+}
+
 export const Figures = BaseFigures | PromotedFigures | BlackFigure | WhiteFigure
 
 export type Figure = typeof Figures
