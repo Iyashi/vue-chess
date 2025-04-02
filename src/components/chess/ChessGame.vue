@@ -90,19 +90,19 @@ function endPromotion(newFigure: Figure) {
   font-size: 2rem;
   @media screen and (min-width: 640px) {
     width: 480px;
-    ::v-deep .chess-board-figure {
+    :deep(.chess-board-figure) {
       font-size: 2.5rem;
     }
   }
   @media screen and (min-width: 768px) {
     width: 640px;
-    ::v-deep .chess-board-figure {
+    :deep(.chess-board-figure) {
       font-size: 3rem;
     }
   }
   @media screen and (min-width: 1024px) {
     width: 768px;
-    ::v-deep .chess-board-figure {
+    :deep(.chess-board-figure) {
       font-size: 3.5rem;
     }
   }

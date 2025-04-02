@@ -76,7 +76,7 @@ function promote(newFigure: Figure) {
 </template>
 
 <style lang="scss" scoped>
-@import '@/assets/chess-font.scss';
+@use '@/assets/chess-font.scss' as chess-font;
 
 .promotion-dialog-container {
   position: absolute;
@@ -130,10 +130,10 @@ function promote(newFigure: Figure) {
     padding: 10px;
 
     &.white {
-      @include chess-figure-white;
+      @include chess-font.chess-figure-white;
     }
     &.black {
-      @include chess-figure-black;
+      @include chess-font.chess-figure-black;
     }
   }
 }

@@ -189,7 +189,8 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
 </template>
 
 <style lang="scss" scoped>
-@import '@/assets/chess-font.scss';
+@use 'sass:color';
+@use '@/assets/chess-font.scss' as chess-font;
 
 .chess-board {
   --header-size: 50px;
@@ -259,7 +260,7 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
     color: white;
 
     .chess-board-tile-label {
-      color: transparentize(white, 0.8);
+      color: color.scale(white, $alpha: -80%);
     }
   }
   &.white {
@@ -267,7 +268,7 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
     color: black;
 
     .chess-board-tile-label {
-      color: transparentize(black, 0.8);
+      color: color.scale(black, $alpha: -80%);
     }
   }
 
@@ -316,10 +317,10 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
   z-index: 2;
 
   &.white {
-    @include chess-figure-white;
+    @include chess-font.chess-figure-white;
   }
   &.black {
-    @include chess-figure-black;
+    @include chess-font.chess-figure-black;
   }
 }
 </style>
