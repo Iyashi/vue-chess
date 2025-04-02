@@ -11,6 +11,7 @@ import {
 import {
   getFigureDesciption,
   isBlackFigure,
+  isEnemyFigure,
   isPawnFigure,
   isRookFigure,
   isKnightFigure,
@@ -19,6 +20,8 @@ import {
   isKingFigure,
   type Figure,
 } from '@/chess/figure'
+import { calculateMovementPaths, type MovementMap } from '@/chess/movement_map'
+import * as Moves from '@/chess/moves'
 
 const emit = defineEmits<{
   (event: 'move', from: Tile, to: Tile): void
@@ -78,6 +81,64 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
   if (draggedTile.value === null) return
   if (!isTile(tile)) return
 }
+
+// TODO: maybe make composable of this?
+const hoverState: Ref<{
+  tile: Tile
+  figure: Figure
+  movementPaths: MovementMap
+} | null> = ref(null)
+
+function handleMouseEnter(event: MouseEvent, tile: Tile) {
+  const figure = props.board[tile]
+  const movementPaths = calculateMovementPaths(props.board, tile)
+  hoverState.value = { tile, figure, movementPaths }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function handleMouseLeave(event: MouseEvent, tile: Tile) {
+  hoverState.value = null
+}
+
+function getTileClassesForMovementPaths(tile: Tile): string[] {
+  // fast-return if no tile is hovered anyways
+  if (hoverState.value === null) return []
+
+  const canMoveClass = 'can-move-to'
+  const cannotMoveClass = 'cannot-move-to'
+  const [x, y] = getAxisIndicesForTile(tile)
+  const moves = hoverState.value.movementPaths[y][x]
+
+  // no moves defined in movement map of hovered figure, ignore tile
+  if (!moves) return []
+
+  // empty tiles
+  if (!props.board[tile] && moves & Moves.JumpOnEmpty) {
+    return [canMoveClass]
+  } else if (!props.board[tile] && moves & Moves.WalkOnEmpty) {
+    // TODO: check if path is blocked by other figures
+    return [canMoveClass]
+  }
+
+  // tiles occupied by enemy figures
+  if (true === isEnemyFigure(hoverState.value.figure, props.board[tile])) {
+    if (moves & Moves.JumpOnEnemy) {
+      return [canMoveClass]
+    } else if (moves & Moves.WalkOnEnemy) {
+      // TODO: check if path is blocked by other figures
+      return [canMoveClass]
+    } else {
+      return [cannotMoveClass]
+    }
+  }
+
+  // tiles occupied by friendly figures
+  if (false === isEnemyFigure(hoverState.value.figure, props.board[tile])) {
+    return [cannotMoveClass]
+  }
+
+  return []
+}
 </script>
 
 <template>
@@ -99,15 +160,18 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
       <div
         v-for="(figure, tile) in props.board"
         :key="tile"
-        :class="['chess-board-tile', getTileColor(tile)]"
+        :class="['chess-board-tile', getTileColor(tile), ...getTileClassesForMovementPaths(tile)]"
         :id="tile"
         :title="tile"
         @drop="handleDrop($event, tile)"
         @dragenter="handleDragEnter($event, tile)"
         @dragleave="handleDragLeave($event, tile)"
         @dragover.prevent
+        @mouseenter="handleMouseEnter($event, tile)"
+        @mouseleave="handleMouseLeave($event, tile)"
       >
         <div class="chess-board-tile-label">{{ tile }}</div>
+        <div class="chess-board-tile-movement-indicator" />
         <div
           v-if="figure !== 0"
           :class="[
@@ -206,9 +270,21 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
       color: transparentize(black, 0.8);
     }
   }
+
+  &.can-move-to {
+    .chess-board-tile-movement-indicator {
+      border-color: green;
+    }
+  }
+  &.cannot-move-to {
+    .chess-board-tile-movement-indicator {
+      border-color: red;
+    }
+  }
 }
 
 .chess-board-tile-label,
+.chess-board-tile-movement-indicator,
 .chess-board-figure {
   display: flex;
   align-items: center;
@@ -225,6 +301,13 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
   user-select: none;
   pointer-events: none;
   z-index: 1;
+}
+
+.chess-board-tile-movement-indicator {
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 6px solid transparent;
+  margin: 5px;
 }
 
 .chess-board-figure {
