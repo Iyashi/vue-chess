@@ -15,11 +15,12 @@ import {
   isBishopFigure,
   isQueenFigure,
   isKingFigure,
+  isFigure,
   isPromotedFigure,
   isBlackFigure,
   isWhiteFigure,
+  isEnemyFigure,
   getFigureDesciption,
-  isFigure,
   MovedOnce,
   hasMovedOnce,
   BaseFigures,
@@ -382,6 +383,24 @@ describe('isWhiteFigure', () => {
     expect(isWhiteFigure(BlackFigure | KnightFigure | PromotedFigure)).toBe(false)
     expect(isWhiteFigure(BlackFigure | BishopFigure | PromotedFigure)).toBe(false)
     expect(isWhiteFigure(BlackFigure | QueenFigure | PromotedFigure)).toBe(false)
+  })
+})
+
+describe('isEnemyFigure', () => {
+  it('should return true for valid enemy figures', () => {
+    expect(isEnemyFigure(WhiteFigure | PawnFigure, BlackFigure | PawnFigure)).toBe(true)
+    expect(isEnemyFigure(BlackFigure | PawnFigure, WhiteFigure | PawnFigure)).toBe(true)
+  })
+  it('should return false for valid friendly figures', () => {
+    expect(isEnemyFigure(WhiteFigure | PawnFigure, WhiteFigure | PawnFigure)).toBe(false)
+    expect(isEnemyFigure(BlackFigure | PawnFigure, BlackFigure | PawnFigure)).toBe(false)
+  })
+  it('should return null for invalid/uncolored figures', () => {
+    expect(isEnemyFigure(PawnFigure, PawnFigure)).toBe(null)
+    expect(isEnemyFigure(BlackFigure | PawnFigure, PawnFigure)).toBe(null)
+    expect(isEnemyFigure(PawnFigure, BlackFigure | PawnFigure)).toBe(null)
+    expect(isEnemyFigure(WhiteFigure | PawnFigure, PawnFigure)).toBe(null)
+    expect(isEnemyFigure(PawnFigure, WhiteFigure | PawnFigure)).toBe(null)
   })
 })
 

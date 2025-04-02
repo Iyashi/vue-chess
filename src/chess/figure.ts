@@ -56,10 +56,14 @@ export function isWhiteFigure(v: unknown): v is typeof WhiteFigure {
 }
 
 export function isEnemyFigure(figure: Figure, target: Figure): boolean | null {
-  if (isBlackFigure(figure)) {
-    return isWhiteFigure(target)
-  } else if (isWhiteFigure(figure)) {
-    return isBlackFigure(target)
+  const figureIsBlack = isBlackFigure(figure)
+  const figureIsWhite = isWhiteFigure(figure)
+  const targetIsBlack = isBlackFigure(target)
+  const targetIsWhite = isWhiteFigure(target)
+  if ((figureIsBlack && targetIsWhite) || (figureIsWhite && targetIsBlack)) {
+    return true
+  } else if ((figureIsBlack && targetIsBlack) || (figureIsWhite && targetIsWhite)) {
+    return false
   }
   return null
 }
