@@ -11,7 +11,6 @@ import {
 import {
   getFigureDesciption,
   isBlackFigure,
-  isWhiteFigure,
   isPawnFigure,
   isRookFigure,
   isKnightFigure,

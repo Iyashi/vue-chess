@@ -3,6 +3,7 @@ import {
   hasFigureMoved,
   isBishopFigure,
   isBlackFigure,
+  isWhiteFigure,
   isKingFigure,
   isKnightFigure,
   isPawnFigure,
