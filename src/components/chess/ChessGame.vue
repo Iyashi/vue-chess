@@ -24,6 +24,18 @@ const turnCount = ref(1)
 const blackCaptures = ref<Figure[]>([])
 const whiteCaptures = ref<Figure[]>([])
 
+function handleResetGame() {
+  if (confirm('Are you sure you want to reset the game?')) {
+    resetGame()
+  }
+}
+
+function resetGame() {
+  activePlayer.value = 'black'
+  turnCount.value = 0
+  resetBoard(board.value)
+}
+
 function handleMove(fromTile: Tile, toTile: Tile): void {
   if (canFigureMove(fromTile, toTile)) {
     moveFigure(fromTile, toTile)
@@ -85,6 +97,14 @@ function moveFigure(fromTile: Tile, toTile: Tile) {
     }
   }
 
+  // check for game end conditions
+  if (isKingFigure(targetFigure)) {
+    if (confirm(activePlayer.value + ' has won! Start a new game?')) {
+      resetGame()
+    }
+    return
+  }
+
   // update other game state
   activePlayer.value = isBlackFigure(movingFigure) ? 'white' : 'black'
   turnCount.value++
@@ -109,12 +129,6 @@ function endPromotion(newFigure: Figure) {
   console.info('Promoting pawn on', promotion.value.tile, 'to', getFigureDesciption(newFigure))
   promotion.value = null
 }
-
-function resetGame() {
-  if (confirm('Are you sure you want to reset the game?')) {
-    resetBoard(board.value)
-  }
-}
 </script>
 
 <template>
@@ -122,7 +136,7 @@ function resetGame() {
     <section class="chess-info">
       <p>Active Player: {{ activePlayer }}</p>
       <p>Turn Count: {{ turnCount }}</p>
-      <button @click="resetGame">Reset Game</button>
+      <button @click="handleResetGame">Reset Game</button>
     </section>
 
     <ChessBoard :board="board" @move="handleMove" />
