@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, type Ref } from 'vue'
+import { type Board } from '@/chess/board'
 import {
   getAxisIndicesForTile,
   HorizontalKeys,
@@ -7,7 +8,6 @@ import {
   VerticalKeys,
   type Tile,
 } from '@/chess/tile'
-import { type Board } from '@/chess/board'
 import {
   getFigureDesciption,
   isBlackFigure,
@@ -34,15 +34,6 @@ const verticalKeys = ref(VerticalKeys)
 function getTileColor(tile: Tile): 'black' | 'white' {
   const [x, y] = getAxisIndicesForTile(tile)
   return (x + y) % 2 === 1 ? 'black' : 'white'
-}
-
-function getFigureColor(figure: Figure): 'black' | 'white' | 'red' {
-  if (isBlackFigure(figure)) {
-    return 'black'
-  } else if (isWhiteFigure(figure)) {
-    return 'white'
-  }
-  return 'red'
 }
 
 function getFigureType(
@@ -111,6 +102,7 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
         :key="tile"
         :class="['chess-board-tile', getTileColor(tile)]"
         :id="tile"
+        :title="tile"
         @drop="handleDrop($event, tile)"
         @dragenter="handleDragEnter($event, tile)"
         @dragleave="handleDragLeave($event, tile)"
@@ -119,8 +111,12 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
         <div class="chess-board-tile-label">{{ tile }}</div>
         <div
           v-if="figure !== 0"
-          :class="['chess-board-figure', getFigureColor(figure), getFigureType(figure)]"
-          :title="getFigureDesciption(figure)"
+          :class="[
+            'chess-board-figure',
+            isBlackFigure(figure) ? 'black' : 'white',
+            getFigureType(figure),
+          ]"
+          :title="`${getFigureDesciption(figure)} on ${tile}`"
           draggable="true"
           @dragstart="handleDragStart($event, tile)"
         />
