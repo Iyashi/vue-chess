@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   isMovementMap,
   shrinkMovementMapForBoard,
-  getMovementMapForFigure,
+  getFigureMovementMap,
   KingMovementMap,
   QueenMovementMap,
   BlackPawnFirstMoveMovementMap,
@@ -214,8 +214,8 @@ describe('shrinkMovementMapForBoard', () => {
   })
 })
 
-describe('getMovementMapForFigure', () => {
-  const fn = getMovementMapForFigure
+describe('getFigureMovementMap', () => {
+  const fn = getFigureMovementMap
   it('should return the correct movement map for a pawn figure', () => {
     expect(fn(PawnFigure | WhiteFigure | MovedOnce)).toEqual(WhitePawnMovementMap)
     expect(fn(PawnFigure | WhiteFigure)).toEqual(WhitePawnFirstMoveMovementMap)

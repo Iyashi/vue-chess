@@ -256,7 +256,26 @@ export function shrinkMovementMapForBoard(map: MovementMap, x: number, y: number
   return map.slice(7 - y, 7 - y + 8).map(($) => $.slice(7 - x, 7 - x + 8))
 }
 
-export function getMovementMapForFigure(figure: Figure): MovementMap {
+/**
+ * Returns the `MovementMap` for the given `Figure`.
+ *
+ * @param {Figure} figure The `Figure` for which to return the `MovementMap`.
+ * @returns {MovementMap} The `MovementMap` for the given `Figure`.
+ *
+ * See also:
+ *
+ * @see {MovementMap} `EmptyMovementMap`
+ * @see {MovementMap} `BlackPawnMovementMap`
+ * @see {MovementMap} `BlackPawnFirstMoveMovementMap`
+ * @see {MovementMap} `WhitePawnMovementMap`
+ * @see {MovementMap} `WhitePawnFirstMoveMovementMap`
+ * @see {MovementMap} `RookMovementMap`
+ * @see {MovementMap} `KnightMovementMap`
+ * @see {MovementMap} `BishopMovementMap`
+ * @see {MovementMap} `QueenMovementMap`
+ * @see {MovementMap} `KingMovementMap`
+ */
+export function getFigureMovementMap(figure: Figure): MovementMap {
   if (isPawnFigure(figure)) {
     if (hasMovedOnce(figure)) {
       return isBlackFigure(figure) ? BlackPawnMovementMap : WhitePawnMovementMap
