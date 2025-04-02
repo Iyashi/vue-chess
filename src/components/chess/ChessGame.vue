@@ -1,52 +1,62 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { createBoard } from '@/chess/board'
-import { getIndexForVerticalKey, type Tile } from '@/chess/tile'
+import { getAxisIndicesForTile, type Tile } from '@/chess/tile'
 import {
-  isBlackFigure,
-  isWhiteFigure,
   isPawnFigure,
   getFigureDesciption,
-  type Figure,
   MovedOnce,
+  isEnemyFigure,
+  type Figure,
 } from '@/chess/figure'
+import { calculateMovementPaths } from '@/chess/movement_map'
+import * as Moves from '@/chess/moves'
 import ChessBoard from '@/components/chess/ChessBoard.vue'
 import ChessPromotionDialog from '@/components/chess/ChessPromotionDialog.vue'
 
 const board = ref(createBoard())
 
-async function handleMove(fromTile: Tile, toTile: Tile) {
+function handleMove(fromTile: Tile, toTile: Tile) {
   if (fromTile === toTile) return // cannot move to same tile
 
-  const movingFigure = board.value[fromTile]
+  let movingFigure = board.value[fromTile]
   const targetFigure = board.value[toTile]
 
-  // TODO: Use movingFigure's MovementMap to check if move is possible
-
-  if (targetFigure === 0) {
-    // empty target, just move the figure
-  } else if (
-    (isBlackFigure(movingFigure) && isBlackFigure(targetFigure)) ||
-    (isWhiteFigure(movingFigure) && isWhiteFigure(targetFigure))
-  ) {
-    // friendly target, cannot move
-    console.warn('Cannot move to friendly figure at', toTile)
-    return
-  } else {
-    // capture the target figure and remove it from the board
-    board.value[toTile] = 0
-    console.info('Capture', getFigureDesciption(targetFigure), 'at', toTile)
+  const movementPaths = calculateMovementPaths(board.value, fromTile)
+  const [toX, toY] = getAxisIndicesForTile(toTile)
+  let shouldMove = false
+  if (movementPaths[toY][toX]) {
+    if (movementPaths[toY][toX] & (Moves.WalkOnEmpty | Moves.JumpOnEmpty) && !targetFigure) {
+      shouldMove = true // move figure to empty target tile
+    } else if (
+      movementPaths[toY][toX] & (Moves.WalkOnEnemy | Moves.JumpOnEnemy) &&
+      true === isEnemyFigure(movingFigure, targetFigure)
+    ) {
+      shouldMove = true // capture enemy figure at target tile and move figure to target tile
+    } else if (
+      movementPaths[toY][toX] & (Moves.WalkOnFriend | Moves.JumpOnFriend) &&
+      false === isEnemyFigure(movingFigure, targetFigure)
+    ) {
+      shouldMove = true // move figure to friendly tile
+      // TODO: Handle special cases when moving on friendly tiles (for example Castling)
+    }
   }
 
-  // move the piece to the new tile and remove it from the old one
-  board.value[fromTile] = 0
-  board.value[toTile] = movingFigure | MovedOnce
-  console.info('Moved from', fromTile, 'to', toTile)
-
   // start pawn promotion if a pawn reaches the end of the board
-  const row = getIndexForVerticalKey(toTile)
-  if (isPawnFigure(movingFigure) && (row === 0 || row == 7)) {
+  if (isPawnFigure(movingFigure) && (toY === 0 || toY == 7)) {
     startPromotion(toTile, movingFigure)
+  }
+
+  // lastly, move the figure to the new tile and update the board state
+  if (shouldMove) {
+    board.value[fromTile] = 0
+    board.value[toTile] = movingFigure = movingFigure | MovedOnce
+    if (targetFigure) {
+      console.info('Captured', getFigureDesciption(targetFigure), 'at', toTile)
+    } else {
+      console.info('Moved to empty tile', toTile)
+    }
+    // TODO: switch active player
   }
 }
 
