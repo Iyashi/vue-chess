@@ -1,3 +1,4 @@
+import type { Board, Tile } from './types'
 import {
   BlackPiece,
   WhitePiece,
@@ -7,11 +8,8 @@ import {
   BishopPiece,
   QueenPiece,
   KingPiece,
-  type Piece,
 } from './piece'
-import { getVerticalKeyForAxisIndex, getHorizontalKeyForAxisIndex, type Tile } from './tile'
-
-export type Board = Record<Tile, Piece | 0>
+import { getVerticalKeyForAxisIndex, getHorizontalKeyForAxisIndex } from './tile'
 
 export function createEmptyBoard(): Board {
   const board = {} as Board

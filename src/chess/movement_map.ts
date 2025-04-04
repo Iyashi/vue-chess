@@ -1,3 +1,4 @@
+import type { Board, Piece, Tile, MovementMap } from './types'
 import * as Moves from './moves'
 import {
   isBlackPiece,
@@ -10,18 +11,8 @@ import {
   isQueenPiece,
   isKingPiece,
   hasPieceMoved,
-  type Piece,
 } from './piece'
-import { getAxisIndicesForTile, getTileForAxisIndices, type Tile } from './tile'
-import type { Board } from './board'
-
-/**
- * MovementMap is a 2D array of all possible moves for a piece on a chessboard.
- *
- * The Map is 15x15 and the piece lies at its center position (x=7, y=7).
- * This allows moves across a 8x8 board no matter where the piece is currently positioned on the board.
- */
-export type MovementMap = number[][]
+import { getAxisIndicesForTile, getTileForAxisIndices } from './tile'
 
 export function isMovementMap(o: unknown): o is MovementMap {
   return (

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import type { Tile, AxisIndices, AxisIndex, HorizontalKey, VerticalKey } from './types'
 import {
   isTile,
   getIndexForHorizontalKey,
@@ -7,12 +8,6 @@ import {
   getVerticalKeyForAxisIndex,
   getTileForAxisIndices,
   getAxisIndicesForTile,
-  getIndexForTile,
-  type Tile,
-  type AxisIndices,
-  type AxisIndex,
-  type HorizontalKey,
-  type VerticalKey,
 } from './tile'
 
 const horizontalKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const
@@ -102,15 +97,5 @@ describe('getAxisIndicesForTile', () => {
     expect(() => getAxisIndicesForTile('a9' as Tile)).toThrowError(error)
     expect(() => getAxisIndicesForTile('x1' as Tile)).toThrowError(error)
     expect(() => getAxisIndicesForTile('.1' as Tile)).toThrowError(error)
-  })
-})
-
-describe('getIndexForTile', () => {
-  it('should return correct index for valid tiles', () => {
-    const keys = Object.keys(allTiles) as Tile[]
-    for (let i = 0; i < keys.length; i++) {
-      const index = getIndexForTile(keys[i])
-      expect(index).toEqual(i)
-    }
   })
 })

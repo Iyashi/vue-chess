@@ -24,7 +24,7 @@ import {
   getPieceDesciption,
   MovedOnce,
   hasPieceMoved,
-  BasePieces,
+  Pieces,
 } from './piece'
 
 describe('isPawnPiece', () => {
@@ -592,10 +592,10 @@ describe('getPieceDesciption', () => {
 
   // Unknown piece (empty tile)
   it('should return Unknown for indetermined piece', () => {
-    expect(fn(BasePieces)).toBe('Unknown')
-    expect(fn(BasePieces | PromotedPiece)).toBe('Unknown (Promoted)')
-    expect(fn(BlackPiece | BasePieces | PromotedPiece)).toBe('Black Unknown (Promoted)')
-    expect(fn(WhitePiece | BasePieces | PromotedPiece)).toBe('White Unknown (Promoted)')
+    expect(fn(Pieces)).toBe('Unknown')
+    expect(fn(Pieces | PromotedPiece)).toBe('Unknown (Promoted)')
+    expect(fn(BlackPiece | Pieces | PromotedPiece)).toBe('Black Unknown (Promoted)')
+    expect(fn(WhitePiece | Pieces | PromotedPiece)).toBe('White Unknown (Promoted)')
   })
 
   // Invalid pieces

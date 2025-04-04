@@ -1,10 +1,12 @@
+import type { Piece } from './types'
+
 /* prettier-ignore */ export const PawnPiece   = 0b0000000001
 /* prettier-ignore */ export const RookPiece   = 0b0000000010
 /* prettier-ignore */ export const KnightPiece = 0b0000000100
 /* prettier-ignore */ export const BishopPiece = 0b0000001000
 /* prettier-ignore */ export const QueenPiece  = 0b0000010000
 /* prettier-ignore */ export const KingPiece   = 0b0000100000
-export const BasePieces = PawnPiece | RookPiece | KnightPiece | BishopPiece | QueenPiece | KingPiece
+export const Pieces = PawnPiece | RookPiece | KnightPiece | BishopPiece | QueenPiece | KingPiece
 
 export function isPawnPiece(v: unknown): v is typeof PawnPiece {
   return typeof v === 'number' && v >= 0 && (v & PawnPiece) === PawnPiece
@@ -37,7 +39,6 @@ export function isPiece(v: unknown): v is Piece {
 }
 
 /* prettier-ignore */ export const PromotedPiece       = 0b0001000000
-export const PromotedPieces = RookPiece | KnightPiece | BishopPiece | QueenPiece | PromotedPiece
 
 export function isPromotedPiece(v: unknown): v is typeof PromotedPiece {
   return typeof v === 'number' && (v & PromotedPiece) === PromotedPiece
@@ -65,10 +66,6 @@ export function isEnemyPiece(piece: Piece, target: Piece): boolean | null {
   }
   return null
 }
-
-export const Pieces = BasePieces | PromotedPieces | BlackPiece | WhitePiece
-
-export type Piece = typeof Pieces
 
 /* prettier-ignore */ export const MovedOnce = 0b1000000000
 
@@ -105,7 +102,7 @@ export function getPieceDesciption(piece: Piece): string {
     parts.push('White')
   }
 
-  switch (piece & BasePieces) {
+  switch (piece & Pieces) {
     case PawnPiece:
       parts.push('Pawn')
       break

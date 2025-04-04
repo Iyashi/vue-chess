@@ -1,3 +1,5 @@
+export type * from './types'
+
 export * from './board'
 export type * from './board'
 
