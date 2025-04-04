@@ -9,13 +9,13 @@ import {
   QueenPiece,
   KingPiece,
 } from './piece'
-import { getVerticalKeyForAxisIndex, getHorizontalKeyForAxisIndex } from './tile'
+import { getTileForAxisIndices } from './tile'
 
 export function createEmptyBoard(): Board {
   const board = {} as Board
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
-      const tile = (getHorizontalKeyForAxisIndex(x) + getVerticalKeyForAxisIndex(y)) as Tile
+      const tile = getTileForAxisIndices(x, y)
       board[tile] = 0
     }
   }
