@@ -15,6 +15,7 @@ import {
   getIndexForVerticalKey,
   calculateMovementPaths,
   Moves,
+  isTile,
   type Piece,
   type Tile,
 } from '@/chess'
@@ -24,6 +25,9 @@ import ChessPromotionDialog from '@/components/chess/ChessPromotionDialog.vue'
 const board = ref(createBoard())
 const activePlayer = ref<'black' | 'white'>('black')
 const turnCount = ref(1)
+const sourceTile = ref<Tile | ''>('')
+const targetTile = ref<Tile | ''>('')
+
 const blackCaptures = ref<Piece[]>([])
 const whiteCaptures = ref<Piece[]>([])
 
@@ -42,6 +46,8 @@ function resetGame() {
 function handleMove(fromTile: Tile, toTile: Tile): void {
   if (canPieceMove(fromTile, toTile)) {
     movePiece(fromTile, toTile)
+    sourceTile.value = ''
+    targetTile.value = ''
   }
 }
 
@@ -139,6 +145,16 @@ function endPromotion(newPiece: Piece) {
     <section class="chess-info">
       <p>Active Player: {{ activePlayer }}</p>
       <p>Turn Count: {{ turnCount }}</p>
+      <form
+        class="manual-move"
+        @submit.prevent="
+          isTile(sourceTile) && isTile(targetTile) && handleMove(sourceTile, targetTile)
+        "
+      >
+        <input v-model="sourceTile" placeholder="From Tile" :size="4" />
+        <input v-model="targetTile" placeholder="To Tile" :size="4" />
+        <button type="submit">Move</button>
+      </form>
       <button @click="handleResetGame">Reset Game</button>
     </section>
 
@@ -200,6 +216,15 @@ function endPromotion(newPiece: Piece) {
       font-size: 3.5rem;
     }
   }
+}
+
+.manual-move {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .chess-info,
