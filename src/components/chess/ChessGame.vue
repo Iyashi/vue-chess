@@ -8,7 +8,6 @@ import {
   isWhitePiece,
   isPawnPiece,
   isEnemyPiece,
-  getPieceKind,
   getPieceDesciption,
   isKingPiece,
   getAxisIndicesForTile,
