@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
 import {
   isBlackFigure,
   RookFigure,
@@ -11,74 +12,76 @@ import {
   getFigureDesciption,
   type Figure,
 } from '@/chess'
+import ChessPiece from './ChessPiece.vue'
 
 const emit = defineEmits<{
-  (event: 'promote', promotedFigure: Figure, oldFigure: Figure): void
+  (event: 'promote', promotedFigure: Figure): void
 }>()
 const props = defineProps<{
   figure: Figure
 }>()
 
+const promotionFigures = computed(() => [
+  {
+    kind: 'rook',
+    figure: RookFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
+    title: `Promote pawn to ${getFigureDesciption(RookFigure)}`,
+  },
+  {
+    kind: 'knight',
+    figure: KnightFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
+    title: `Promote pawn to ${getFigureDesciption(KnightFigure)}`,
+  },
+  {
+    kind: 'bishop',
+    figure: BishopFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
+    title: `Promote pawn to ${getFigureDesciption(BishopFigure)}`,
+  },
+  {
+    kind: 'queen',
+    figure: QueenFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
+    title: `Promote pawn to ${getFigureDesciption(QueenFigure)}`,
+  },
+])
+
 function promote(newFigure: Figure) {
   newFigure |= isBlackFigure(props.figure) ? BlackFigure : WhiteFigure
-  newFigure |= PromotedFigure
-  emit('promote', newFigure, props.figure)
+  emit('promote', newFigure | PromotedFigure)
 }
 </script>
 
 <template>
   <div class="promotion-dialog-container">
-    <div class="promotion-dialog">
+    <dialog class="promotion-dialog">
       <header>
         <h2>Promote pawn to...</h2>
       </header>
 
       <ul class="promotion-figure-list">
-        <li>
+        <li v-for="promotionFigure in promotionFigures" :key="promotionFigure.kind">
           <button
-            :class="['rook', isBlackFigure(props.figure) ? 'black' : 'white']"
-            :title="`Promote ${getFigureDesciption(props.figure)} to ${getFigureDesciption(RookFigure)}`"
-            @click="promote(RookFigure)"
-          />
-          <span>Rook</span>
-        </li>
-        <li>
-          <button
-            :class="['knight', isBlackFigure(props.figure) ? 'black' : 'white']"
-            :title="`Promote ${getFigureDesciption(props.figure)} to ${getFigureDesciption(KnightFigure)}`"
-            @click="promote(KnightFigure)"
-          />
-          <span>Knight</span>
-        </li>
-        <li>
-          <button
-            :class="['bishop', isBlackFigure(props.figure) ? 'black' : 'white']"
-            :title="`Promote ${getFigureDesciption(props.figure)} to ${getFigureDesciption(BishopFigure)}`"
-            @click="promote(BishopFigure)"
-          />
-          <span>Bishop</span>
-        </li>
-        <li>
-          <button
-            :class="['queen', isBlackFigure(props.figure) ? 'black' : 'white']"
-            :title="`Promote ${getFigureDesciption(props.figure)} to ${getFigureDesciption(QueenFigure)}`"
-            @click="promote(QueenFigure)"
-          />
-          <span>Queen</span>
+            :class="[promotionFigure.kind]"
+            :title="promotionFigure.title"
+            @click="promote(promotionFigure.figure)"
+          >
+            <ChessPiece :figure="promotionFigure.figure" />
+          </button>
+          <span class="name">{{ getFigureDesciption(promotionFigure.figure) }}</span>
         </li>
       </ul>
 
       <footer>
         <p>You have to select a figure. The pawn cannot move any further!</p>
       </footer>
-    </div>
+    </dialog>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@use '@/assets/chess-font.scss' as chess-font;
-
 .promotion-dialog-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -86,10 +89,7 @@ function promote(newFigure: Figure) {
   right: 0;
   z-index: 999;
   background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50px;
-  padding: 100px;
   backdrop-filter: blur(1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .promotion-dialog {
@@ -98,13 +98,17 @@ function promote(newFigure: Figure) {
   align-items: center;
   justify-content: space-between;
   gap: 50px;
-  width: 100%;
   z-index: 999;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50px;
   padding: 50px;
-  backdrop-filter: blur(1px);
+  margin: 60px;
+  border-radius: 50px;
+  background-color: rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  header,
+  footer {
+    text-align: center;
+  }
 }
 
 .promotion-figure-list {
@@ -122,19 +126,15 @@ function promote(newFigure: Figure) {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    font-size: 1.3rem;
   }
 
   button {
-    font-size: 3.5rem;
+    font-size: 1.5em;
     padding: 10px;
+  }
 
-    &.white {
-      @include chess-font.chess-figure-white;
-    }
-    &.black {
-      @include chess-font.chess-figure-black;
-    }
+  .name {
+    font-size: 1.2rem;
   }
 }
 </style>
