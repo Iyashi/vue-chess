@@ -4,8 +4,8 @@ export type * from './board'
 export * from './tile'
 export type * from './tile'
 
-export * from './figure'
-export type * from './figure'
+export * from './piece'
+export type * from './piece'
 
 export * as Moves from './moves'
 export type * from './moves'

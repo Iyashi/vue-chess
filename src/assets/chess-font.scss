@@ -3,7 +3,7 @@
   src: url('@/assets/chess.otf') format('opentype');
 }
 
-@mixin chess-figure-white {
+@mixin chess-piece-white {
   font-family: 'ChessMedium';
 
   &.pawn::before {
@@ -26,7 +26,7 @@
   }
 }
 
-@mixin chess-figure-black {
+@mixin chess-piece-black {
   font-family: 'ChessMedium';
 
   &.pawn::before {

@@ -1,52 +1,52 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import {
-  isBlackFigure,
-  RookFigure,
-  KnightFigure,
-  BishopFigure,
-  QueenFigure,
-  BlackFigure,
-  PromotedFigure,
-  WhiteFigure,
-  getFigureDesciption,
-  type Figure,
+  isBlackPiece,
+  RookPiece,
+  KnightPiece,
+  BishopPiece,
+  QueenPiece,
+  BlackPiece,
+  PromotedPiece,
+  WhitePiece,
+  getPieceDesciption,
+  type Piece,
 } from '@/chess'
 import ChessPiece from './ChessPiece.vue'
 
 const emit = defineEmits<{
-  (event: 'promote', promotedFigure: Figure): void
+  (event: 'promote', promotedPiece: Piece): void
 }>()
 const props = defineProps<{
-  figure: Figure
+  piece: Piece
 }>()
 
-const promotionFigures = computed(() => [
+const promotionPieces = computed(() => [
   {
     kind: 'rook',
-    figure: RookFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
-    title: `Promote pawn to ${getFigureDesciption(RookFigure)}`,
+    piece: RookPiece | (isBlackPiece(props.piece) ? BlackPiece : WhitePiece),
+    title: `Promote pawn to ${getPieceDesciption(RookPiece)}`,
   },
   {
     kind: 'knight',
-    figure: KnightFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
-    title: `Promote pawn to ${getFigureDesciption(KnightFigure)}`,
+    piece: KnightPiece | (isBlackPiece(props.piece) ? BlackPiece : WhitePiece),
+    title: `Promote pawn to ${getPieceDesciption(KnightPiece)}`,
   },
   {
     kind: 'bishop',
-    figure: BishopFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
-    title: `Promote pawn to ${getFigureDesciption(BishopFigure)}`,
+    piece: BishopPiece | (isBlackPiece(props.piece) ? BlackPiece : WhitePiece),
+    title: `Promote pawn to ${getPieceDesciption(BishopPiece)}`,
   },
   {
     kind: 'queen',
-    figure: QueenFigure | (isBlackFigure(props.figure) ? BlackFigure : WhiteFigure),
-    title: `Promote pawn to ${getFigureDesciption(QueenFigure)}`,
+    piece: QueenPiece | (isBlackPiece(props.piece) ? BlackPiece : WhitePiece),
+    title: `Promote pawn to ${getPieceDesciption(QueenPiece)}`,
   },
 ])
 
-function promote(newFigure: Figure) {
-  newFigure |= isBlackFigure(props.figure) ? BlackFigure : WhiteFigure
-  emit('promote', newFigure | PromotedFigure)
+function promote(newPiece: Piece) {
+  newPiece |= isBlackPiece(props.piece) ? BlackPiece : WhitePiece
+  emit('promote', newPiece | PromotedPiece)
 }
 </script>
 
@@ -57,21 +57,21 @@ function promote(newFigure: Figure) {
         <h2>Promote pawn to...</h2>
       </header>
 
-      <ul class="promotion-figure-list">
-        <li v-for="promotionFigure in promotionFigures" :key="promotionFigure.kind">
+      <ul class="promotion-piece-list">
+        <li v-for="promotionPiece in promotionPieces" :key="promotionPiece.kind">
           <button
-            :class="[promotionFigure.kind]"
-            :title="promotionFigure.title"
-            @click="promote(promotionFigure.figure)"
+            :class="[promotionPiece.kind]"
+            :title="promotionPiece.title"
+            @click="promote(promotionPiece.piece)"
           >
-            <ChessPiece :figure="promotionFigure.figure" />
+            <ChessPiece :piece="promotionPiece.piece" />
           </button>
-          <span class="name">{{ getFigureDesciption(promotionFigure.figure) }}</span>
+          <span class="name">{{ getPieceDesciption(promotionPiece.piece) }}</span>
         </li>
       </ul>
 
       <footer>
-        <p>You have to select a figure. The pawn cannot move any further!</p>
+        <p>You have to select a piece. The pawn cannot move any further!</p>
       </footer>
     </dialog>
   </div>
@@ -111,7 +111,7 @@ function promote(newFigure: Figure) {
   }
 }
 
-.promotion-figure-list {
+.promotion-piece-list {
   display: flex;
   flex-direction: row;
   align-items: center;

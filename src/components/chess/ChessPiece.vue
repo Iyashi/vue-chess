@@ -1,28 +1,28 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import {
-  isBlackFigure,
-  isWhiteFigure,
-  isPromotedFigure,
-  hasFigureMoved,
-  getFigureKind,
-  getFigureDesciption,
-  type Figure,
+  isBlackPiece,
+  isWhitePiece,
+  isPromotedPiece,
+  hasPieceMoved,
+  getPieceKind,
+  getPieceDesciption,
+  type Piece,
 } from '@/chess'
 
 const props = defineProps<{
-  figure: Figure
+  piece: Piece
 }>()
 
-const isBlack = computed(() => isBlackFigure(props.figure))
-const isWhite = computed(() => isWhiteFigure(props.figure))
+const isBlack = computed(() => isBlackPiece(props.piece))
+const isWhite = computed(() => isWhitePiece(props.piece))
 const player = computed(() => (isBlack.value ? 'black' : 'white'))
 
-const kind = computed(() => getFigureKind(props.figure))
-const desciption = computed(() => getFigureDesciption(props.figure))
+const kind = computed(() => getPieceKind(props.piece))
+const desciption = computed(() => getPieceDesciption(props.piece))
 
-const isPromoted = computed(() => isPromotedFigure(props.figure))
-const hasMoved = computed(() => hasFigureMoved(props.figure))
+const isPromoted = computed(() => isPromotedPiece(props.piece))
+const hasMoved = computed(() => hasPieceMoved(props.piece))
 
 defineExpose({
   isBlack,

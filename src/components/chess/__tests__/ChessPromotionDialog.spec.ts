@@ -3,78 +3,78 @@ import { mount } from '@vue/test-utils'
 
 import ChessPromotionDialog from '../ChessPromotionDialog.vue'
 import {
-  BlackFigure,
-  WhiteFigure,
-  PawnFigure,
-  isBlackFigure,
-  isWhiteFigure,
-  isBishopFigure,
-  isKnightFigure,
-  isQueenFigure,
-  isRookFigure,
-} from '@/chess/figure'
+  BlackPiece,
+  WhitePiece,
+  PawnPiece,
+  isBlackPiece,
+  isWhitePiece,
+  isBishopPiece,
+  isKnightPiece,
+  isQueenPiece,
+  isRookPiece,
+} from '@/chess/piece'
 
 describe('ChessPromotionDialog', () => {
   it('renders properly', () => {
-    const wrapper = mount(ChessPromotionDialog, { props: { figure: PawnFigure } })
+    const wrapper = mount(ChessPromotionDialog, { props: { piece: PawnPiece } })
     expect(wrapper.element.classList.toString()).toContain('promotion-dialog-container')
   })
 })
 
 describe('ChessPromotionDialog @promote event', () => {
-  it('emits promote event when a black figure is selected', () => {
-    ;['rook', 'knight', 'bishop', 'queen'].forEach((figureName) => {
-      const figure = BlackFigure | PawnFigure
-      const wrapper = mount(ChessPromotionDialog, { props: { figure } })
-      const figureButton = wrapper.vm.$el.querySelector('button.' + figureName)
-      figureButton.click()
+  it('emits promote event when a black piece is selected', () => {
+    ;['rook', 'knight', 'bishop', 'queen'].forEach((pieceName) => {
+      const piece = BlackPiece | PawnPiece
+      const wrapper = mount(ChessPromotionDialog, { props: { piece } })
+      const pieceButton = wrapper.vm.$el.querySelector('button.' + pieceName)
+      pieceButton.click()
       const emitted = wrapper.emitted()
       expect('promote' in emitted).toBe(true)
       expect(emitted.promote.length).toEqual(1)
       const promoteEvent = emitted.promote[0] as [number, number]
-      expect(promoteEvent[1]).toEqual(figure)
-      expect(isBlackFigure(promoteEvent[0])).toBe(true)
-      switch (figureName) {
+      expect(promoteEvent[1]).toEqual(piece)
+      expect(isBlackPiece(promoteEvent[0])).toBe(true)
+      switch (pieceName) {
         case 'rook':
-          expect(isRookFigure(promoteEvent[0])).toBe(true)
+          expect(isRookPiece(promoteEvent[0])).toBe(true)
           break
         case 'knight':
-          expect(isKnightFigure(promoteEvent[0])).toBe(true)
+          expect(isKnightPiece(promoteEvent[0])).toBe(true)
           break
         case 'bishop':
-          expect(isBishopFigure(promoteEvent[0])).toBe(true)
+          expect(isBishopPiece(promoteEvent[0])).toBe(true)
           break
         case 'queen':
-          expect(isQueenFigure(promoteEvent[0])).toBe(true)
+          expect(isQueenPiece(promoteEvent[0])).toBe(true)
           break
       }
     })
   })
 
-  it('emits promote event when a white figure is selected', () => {
-    ;['rook', 'knight', 'bishop', 'queen'].forEach((figureName) => {
-      const figure = WhiteFigure | PawnFigure
-      const wrapper = mount(ChessPromotionDialog, { props: { figure } })
-      const figureButton = wrapper.vm.$el.querySelector('button.' + figureName)
-      figureButton.click()
+  it('emits promote event when a white piece is selected', () => {
+    ;['rook', 'knight', 'bishop', 'queen'].forEach((pieceName) => {
+      const piece = WhitePiece | PawnPiece
+      const wrapper = mount(ChessPromotionDialog, { props: { piece } })
+      const pieceButton = wrapper.vm.$el.querySelector('button.' + pieceName)
+      pieceButton.click()
       const emitted = wrapper.emitted()
       expect('promote' in emitted).toBe(true)
       expect(emitted.promote.length).toEqual(1)
       const promoteEvent = emitted.promote[0] as [number, number]
-      expect(promoteEvent[1]).toEqual(figure)
-      expect(isWhiteFigure(promoteEvent[0])).toBe(true)
-      switch (figureName) {
+      expect(promoteEvent[1]).toEqual(piece)
+      expect(isWhitePiece(promoteEvent[0])).toBe(true)
+      switch (pieceName) {
         case 'rook':
-          expect(isRookFigure(promoteEvent[0])).toBe(true)
+          expect(isRookPiece(promoteEvent[0])).toBe(true)
           break
         case 'knight':
-          expect(isKnightFigure(promoteEvent[0])).toBe(true)
+          expect(isKnightPiece(promoteEvent[0])).toBe(true)
           break
         case 'bishop':
-          expect(isBishopFigure(promoteEvent[0])).toBe(true)
+          expect(isBishopPiece(promoteEvent[0])).toBe(true)
           break
         case 'queen':
-          expect(isQueenFigure(promoteEvent[0])).toBe(true)
+          expect(isQueenPiece(promoteEvent[0])).toBe(true)
           break
       }
     })

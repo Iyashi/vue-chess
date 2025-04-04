@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, type Ref } from 'vue'
 import {
-  getFigureDesciption,
-  isEnemyFigure,
+  getPieceDesciption,
+  isEnemyPiece,
   getAxisIndicesForTile,
   HorizontalKeys,
   isTile,
@@ -11,7 +11,7 @@ import {
   Moves,
   type Board,
   type Tile,
-  type Figure,
+  type Piece,
   type MovementMap,
 } from '@/chess'
 import ChessPiece from './ChessPiece.vue'
@@ -31,7 +31,7 @@ function getTileColor(tile: Tile): 'black' | 'white' {
   return (x + y) % 2 === 1 ? 'black' : 'white'
 }
 
-// drag and drop a figure
+// drag and drop a piece
 const draggedTile: Ref<Tile | null> = ref(null)
 
 function handleDragStart(event: DragEvent, tile: Tile) {
@@ -57,18 +57,18 @@ function handleDragLeave(event: DragEvent, tile: Tile) {
   if (!isTile(tile)) return
 }
 
-// hovering a figure
+// hovering a piece
 // TODO: maybe make composable of this?
 const hoverState: Ref<{
   tile: Tile
-  figure: Figure
+  piece: Piece
   movementPaths: MovementMap
 } | null> = ref(null)
 
 function handleMouseEnter(event: MouseEvent, tile: Tile) {
-  const figure = props.board[tile]
+  const piece = props.board[tile]
   const movementPaths = calculateMovementPaths(props.board, tile)
-  hoverState.value = { tile, figure, movementPaths }
+  hoverState.value = { tile, piece, movementPaths }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -85,7 +85,7 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
   const [x, y] = getAxisIndicesForTile(tile)
   const moves = hoverState.value.movementPaths[y][x]
 
-  // no moves defined in movement map of hovered figure, ignore tile
+  // no moves defined in movement map of hovered piece, ignore tile
   if (!moves) return []
 
   // empty tiles
@@ -97,8 +97,8 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
     }
   }
 
-  // tiles occupied by enemy figures
-  if (true === isEnemyFigure(hoverState.value.figure, props.board[tile])) {
+  // tiles occupied by enemy pieces
+  if (true === isEnemyPiece(hoverState.value.piece, props.board[tile])) {
     if (moves & (Moves.WalkOnEnemy | Moves.JumpOnEnemy)) {
       return [canMoveClass]
     } else {
@@ -106,8 +106,8 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
     }
   }
 
-  // tiles occupied by friendly figures
-  if (false === isEnemyFigure(hoverState.value.figure, props.board[tile])) {
+  // tiles occupied by friendly pieces
+  if (false === isEnemyPiece(hoverState.value.piece, props.board[tile])) {
     if (moves & (Moves.WalkOnFriend | Moves.JumpOnFriend)) {
       return [canMoveClass]
     } else {
@@ -136,7 +136,7 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
 
     <section class="chess-board-tiles">
       <div
-        v-for="(figure, tile) in props.board"
+        v-for="(piece, tile) in props.board"
         :key="tile"
         :class="['chess-board-tile', getTileColor(tile), ...getTileClassesForMovementPaths(tile)]"
         :id="tile"
@@ -151,9 +151,9 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
         <div class="chess-board-tile-label">{{ tile }}</div>
         <div class="chess-board-tile-movement-indicator" />
         <ChessPiece
-          v-if="figure !== 0"
-          :figure="figure"
-          :title="`${getFigureDesciption(figure)} on ${tile}`"
+          v-if="piece !== 0"
+          :piece="piece"
+          :title="`${getPieceDesciption(piece)} on ${tile}`"
           draggable="true"
           @dragstart="handleDragStart($event, tile)"
         />

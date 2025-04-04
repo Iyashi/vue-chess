@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   isMovementMap,
-  getFigureMovementMap,
+  getPieceMovementMap,
   getPositionalMovementMapSlice,
   calculateMovementPaths,
   EmptyMovementMap,
@@ -17,16 +17,16 @@ import {
 } from './movement_map'
 import * as Moves from './moves'
 import {
-  BlackFigure,
-  WhiteFigure,
+  BlackPiece,
+  WhitePiece,
   MovedOnce,
-  PawnFigure,
-  RookFigure,
-  KnightFigure,
-  BishopFigure,
-  QueenFigure,
-  KingFigure,
-} from './figure'
+  PawnPiece,
+  RookPiece,
+  KnightPiece,
+  BishopPiece,
+  QueenPiece,
+  KingPiece,
+} from './piece'
 import { createEmptyBoard } from './board'
 
 const testEmptyMovementMap = [
@@ -216,37 +216,37 @@ describe('getPositionalMovementMapSlice', () => {
   })
 })
 
-describe('getFigureMovementMap', () => {
-  const fn = getFigureMovementMap
-  it('should return the correct movement map for a pawn figure', () => {
-    expect(fn(PawnFigure | WhiteFigure | MovedOnce)).toEqual(WhitePawnMovementMap)
-    expect(fn(PawnFigure | WhiteFigure)).toEqual(WhitePawnFirstMoveMovementMap)
-    expect(fn(PawnFigure | BlackFigure | MovedOnce)).toEqual(BlackPawnMovementMap)
-    expect(fn(PawnFigure | BlackFigure)).toEqual(BlackPawnFirstMoveMovementMap)
+describe('getPieceMovementMap', () => {
+  const fn = getPieceMovementMap
+  it('should return the correct movement map for a pawn piece', () => {
+    expect(fn(PawnPiece | WhitePiece | MovedOnce)).toEqual(WhitePawnMovementMap)
+    expect(fn(PawnPiece | WhitePiece)).toEqual(WhitePawnFirstMoveMovementMap)
+    expect(fn(PawnPiece | BlackPiece | MovedOnce)).toEqual(BlackPawnMovementMap)
+    expect(fn(PawnPiece | BlackPiece)).toEqual(BlackPawnFirstMoveMovementMap)
   })
-  it('should return the correct movement map for a rook figure', () => {
-    expect(fn(RookFigure | WhiteFigure)).toEqual(RookMovementMap)
-    expect(fn(RookFigure | BlackFigure)).toEqual(RookMovementMap)
+  it('should return the correct movement map for a rook piece', () => {
+    expect(fn(RookPiece | WhitePiece)).toEqual(RookMovementMap)
+    expect(fn(RookPiece | BlackPiece)).toEqual(RookMovementMap)
   })
-  it('should return the correct movement map for a knight figure', () => {
-    expect(fn(KnightFigure | WhiteFigure)).toEqual(KnightMovementMap)
-    expect(fn(KnightFigure | BlackFigure)).toEqual(KnightMovementMap)
+  it('should return the correct movement map for a knight piece', () => {
+    expect(fn(KnightPiece | WhitePiece)).toEqual(KnightMovementMap)
+    expect(fn(KnightPiece | BlackPiece)).toEqual(KnightMovementMap)
   })
-  it('should return the correct movement map for a bishop figure', () => {
-    expect(fn(BishopFigure | WhiteFigure)).toEqual(BishopMovementMap)
-    expect(fn(BishopFigure | BlackFigure)).toEqual(BishopMovementMap)
+  it('should return the correct movement map for a bishop piece', () => {
+    expect(fn(BishopPiece | WhitePiece)).toEqual(BishopMovementMap)
+    expect(fn(BishopPiece | BlackPiece)).toEqual(BishopMovementMap)
   })
-  it('should return the correct movement map for a queen figure', () => {
-    expect(fn(QueenFigure | WhiteFigure)).toEqual(QueenMovementMap)
-    expect(fn(QueenFigure | BlackFigure)).toEqual(QueenMovementMap)
+  it('should return the correct movement map for a queen piece', () => {
+    expect(fn(QueenPiece | WhitePiece)).toEqual(QueenMovementMap)
+    expect(fn(QueenPiece | BlackPiece)).toEqual(QueenMovementMap)
   })
-  it('should return the correct movement map for a king figure', () => {
-    expect(fn(KingFigure | WhiteFigure)).toEqual(KingMovementMap)
-    expect(fn(KingFigure | BlackFigure)).toEqual(KingMovementMap)
+  it('should return the correct movement map for a king piece', () => {
+    expect(fn(KingPiece | WhitePiece)).toEqual(KingMovementMap)
+    expect(fn(KingPiece | BlackPiece)).toEqual(KingMovementMap)
   })
-  it('should return an empty movement map for invalid figures', () => {
-    expect(fn(WhiteFigure)).toEqual(EmptyMovementMap)
-    expect(fn(BlackFigure)).toEqual(EmptyMovementMap)
+  it('should return an empty movement map for invalid pieces', () => {
+    expect(fn(WhitePiece)).toEqual(EmptyMovementMap)
+    expect(fn(BlackPiece)).toEqual(EmptyMovementMap)
   })
 })
 
