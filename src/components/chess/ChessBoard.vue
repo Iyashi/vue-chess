@@ -2,9 +2,7 @@
 import { ref, type Ref } from 'vue'
 import {
   getFigureDesciption,
-  isBlackFigure,
   isEnemyFigure,
-  getFigureKind,
   getAxisIndicesForTile,
   HorizontalKeys,
   isTile,
@@ -16,6 +14,7 @@ import {
   type Figure,
   type MovementMap,
 } from '@/chess'
+import ChessPiece from './ChessPiece.vue'
 
 const emit = defineEmits<{
   (event: 'move', from: Tile, to: Tile): void
@@ -151,13 +150,9 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
       >
         <div class="chess-board-tile-label">{{ tile }}</div>
         <div class="chess-board-tile-movement-indicator" />
-        <div
+        <ChessPiece
           v-if="figure !== 0"
-          :class="[
-            'chess-board-figure',
-            isBlackFigure(figure) ? 'black' : 'white',
-            getFigureKind(figure),
-          ]"
+          :figure="figure"
           :title="`${getFigureDesciption(figure)} on ${tile}`"
           draggable="true"
           @dragstart="handleDragStart($event, tile)"
@@ -265,15 +260,19 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
 
 .chess-board-tile-label,
 .chess-board-tile-movement-indicator,
-.chess-board-figure {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.chess-piece {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.chess-board-tile-label,
+.chess-board-tile-movement-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chess-board-tile-label {
@@ -290,16 +289,9 @@ function getTileClassesForMovementPaths(tile: Tile): string[] {
   margin: 5px;
 }
 
-.chess-board-figure {
+.chess-piece {
   font-size: 2rem;
   user-select: none;
   z-index: 2;
-
-  &.white {
-    @include chess-font.chess-figure-white;
-  }
-  &.black {
-    @include chess-font.chess-figure-black;
-  }
 }
 </style>
