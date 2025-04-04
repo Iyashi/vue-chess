@@ -21,6 +21,7 @@ import {
 } from '@/chess'
 import ChessBoard from '@/components/chess/ChessBoard.vue'
 import ChessPromotionDialog from '@/components/chess/ChessPromotionDialog.vue'
+import ChessPiece from '@/components/chess/ChessPiece.vue'
 
 const board = ref(createBoard())
 const activePlayer = ref<'black' | 'white'>('black')
@@ -165,10 +166,7 @@ function endPromotion(newPiece: Piece) {
         <p>Black captured:</p>
         <ul>
           <li v-for="(piece, index) in blackCaptures" :key="index">
-            <span
-              :class="['chess-piece white', getPieceKind(piece)]"
-              :title="getPieceDesciption(piece)"
-            />
+            <ChessPiece :piece="piece" />
           </li>
         </ul>
       </div>
@@ -176,10 +174,7 @@ function endPromotion(newPiece: Piece) {
         <p>White captured:</p>
         <ul>
           <li v-for="(piece, index) in whiteCaptures" :key="index">
-            <span
-              :class="['chess-piece black', getPieceKind(piece)]"
-              :title="getPieceDesciption(piece)"
-            />
+            <ChessPiece :piece="piece" />
           </li>
         </ul>
       </div>
@@ -190,8 +185,6 @@ function endPromotion(newPiece: Piece) {
 </template>
 
 <style lang="scss" scoped>
-@use '@/assets/chess-font.scss' as chess-font;
-
 .chess-game {
   position: relative; // make promotion dialog overlay chess-game container
   width: 100%;
@@ -250,16 +243,6 @@ function endPromotion(newPiece: Piece) {
   ul {
     list-style-type: none;
     padding: 0;
-  }
-}
-
-.chess-piece {
-  font-size: 2rem;
-  &.black {
-    @include chess-font.chess-piece-black;
-  }
-  &.white {
-    @include chess-font.chess-piece-white;
   }
 }
 </style>
