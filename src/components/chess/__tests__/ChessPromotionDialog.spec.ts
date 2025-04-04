@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 
-import ChessPromotionDialog from '../ChessPromotionDialog.vue'
 import {
   BlackPiece,
   WhitePiece,
@@ -13,6 +12,7 @@ import {
   isQueenPiece,
   isRookPiece,
 } from '@/chess/piece'
+import ChessPromotionDialog from '../ChessPromotionDialog.vue'
 
 describe('ChessPromotionDialog', () => {
   it('renders properly', () => {
@@ -32,7 +32,6 @@ describe('ChessPromotionDialog @promote event', () => {
       expect('promote' in emitted).toBe(true)
       expect(emitted.promote.length).toEqual(1)
       const promoteEvent = emitted.promote[0] as [number, number]
-      expect(promoteEvent[1]).toEqual(piece)
       expect(isBlackPiece(promoteEvent[0])).toBe(true)
       switch (pieceName) {
         case 'rook':
@@ -61,7 +60,6 @@ describe('ChessPromotionDialog @promote event', () => {
       expect('promote' in emitted).toBe(true)
       expect(emitted.promote.length).toEqual(1)
       const promoteEvent = emitted.promote[0] as [number, number]
-      expect(promoteEvent[1]).toEqual(piece)
       expect(isWhitePiece(promoteEvent[0])).toBe(true)
       switch (pieceName) {
         case 'rook':

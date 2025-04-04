@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 
-import ChessBoard from '../ChessBoard.vue'
 import { createBoard } from '@/chess/board'
+import ChessBoard from '../ChessBoard.vue'
 
 describe('ChessBoard', () => {
   it('renders properly', () => {
