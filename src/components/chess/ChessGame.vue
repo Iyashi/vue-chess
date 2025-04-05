@@ -151,9 +151,12 @@ function endPromotion(newPiece: Piece) {
           isTile(sourceTile) && isTile(targetTile) && handleMove(sourceTile, targetTile)
         "
       >
-        <input v-model="sourceTile" placeholder="From Tile" :size="4" />
-        <input v-model="targetTile" placeholder="To Tile" :size="4" />
+        <input v-model="sourceTile" placeholder="From Tile" :size="4" list="tiles" />
+        <input v-model="targetTile" placeholder="To Tile" :size="4" list="tiles" />
         <button type="submit">Move</button>
+        <datalist id="tiles">
+          <option v-for="(_, tile) in board" :key="tile" :value="tile" />
+        </datalist>
       </form>
       <button @click="handleResetGame">Reset Game</button>
     </section>
