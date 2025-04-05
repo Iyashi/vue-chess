@@ -40,6 +40,10 @@ function handleResetGame() {
 function resetGame() {
   activePlayer.value = 'black'
   turnCount.value = 0
+  sourceTile.value = ''
+  targetTile.value = ''
+  blackCaptures.value = []
+  whiteCaptures.value = []
   resetBoard(board.value)
 }
 
