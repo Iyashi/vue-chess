@@ -139,16 +139,11 @@ function canMoveToTile(tile: Tile): boolean | null {
 }
 
 .chess-board-header {
-  &.top,
-  &.bottom,
-  &.left,
-  &.right {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    font-size: 1.5rem;
-    user-select: none;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  font-size: 1.5rem;
+  user-select: none;
 
   &.top {
     grid-area: header_top;
