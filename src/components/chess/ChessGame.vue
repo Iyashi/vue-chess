@@ -194,24 +194,24 @@ function endPromotion(newPiece: Piece) {
 .chess-game {
   position: relative; // make promotion dialog overlay chess-game container
   width: 100%;
-  :deep(.chess-board-piece) {
+  :deep(.chess-piece) {
     font-size: 2rem;
   }
   @media screen and (min-width: 640px) {
     width: 480px;
-    :deep(.chess-board-piece) {
+    :deep(.chess-piece) {
       font-size: 2.5rem;
     }
   }
   @media screen and (min-width: 768px) {
     width: 560px;
-    :deep(.chess-board-piece) {
+    :deep(.chess-piece) {
       font-size: 3rem;
     }
   }
   @media screen and (min-width: 1024px) {
     width: 640px;
-    :deep(.chess-board-piece) {
+    :deep(.chess-piece) {
       font-size: 3.5rem;
     }
   }
