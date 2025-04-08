@@ -124,7 +124,7 @@ const promotion = ref<{ tile: Tile; targetTile: Tile; piece: Piece; targetPiece?
 )
 function promotePiece(newPiece: Piece) {
   if (promotion.value === null) return // promotion not started yet
-  board.value[promotion.value.tile] = newPiece
+  board.value[promotion.value.targetTile] = newPiece
 
   // add promotion history entry
   history.create(
