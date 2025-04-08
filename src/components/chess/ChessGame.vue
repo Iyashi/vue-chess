@@ -15,6 +15,7 @@ import {
   canPieceMove,
   type Piece,
   type Tile,
+  type History,
 } from '@/chess'
 import { useHistory } from '@/chess/composables'
 import ChessBoard from '@/components/chess/ChessBoard.vue'
@@ -111,6 +112,20 @@ function promotePiece(newPiece: Piece) {
   )
   promotion.value = null
 }
+
+// Handle history viewer
+const historyBackup = ref<History | null>(null)
+function showHistoryOnBoard(newEntries: History) {
+  historyBackup.value = historyEntries.value
+  historyEntries.value = newEntries
+  board.value = history.board.value
+}
+function showCurrentGameOnBoard() {
+  if (!historyBackup.value) return
+  historyEntries.value = historyBackup.value
+  historyBackup.value = null
+  board.value = history.board.value
+}
 </script>
 
 <template>
@@ -162,9 +177,10 @@ function promotePiece(newPiece: Piece) {
     <section class="chess-history">
       <header>
         <h3>Game History</h3>
+        <button v-if="historyBackup" @click="showCurrentGameOnBoard()">Return to game</button>
       </header>
 
-      <ChessHistory :history="historyEntries" />
+      <ChessHistory :history="historyEntries" @show="showHistoryOnBoard($event)" />
     </section>
   </div>
 </template>

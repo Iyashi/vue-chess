@@ -2,6 +2,9 @@
 import { isPiece, type History } from '@/chess'
 import ChessPiece from '@/components/chess/ChessPiece.vue'
 
+const emit = defineEmits<{
+  (event: 'show', entries: History): void
+}>()
 const props = defineProps<{
   history: History
 }>()
@@ -27,6 +30,10 @@ const props = defineProps<{
         <span class="label">and was promoted to</span>
         <ChessPiece class="promoted-piece" :piece="entry.promotedPiece" />
       </template>
+
+      <button class="show-on-board" @click="emit('show', history.slice(0, index))">
+        Show on board
+      </button>
     </li>
   </ul>
 </template>
