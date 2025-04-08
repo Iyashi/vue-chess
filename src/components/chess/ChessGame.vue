@@ -50,6 +50,9 @@ function resetGame() {
 }
 
 function handleMove(fromTile: Tile, toTile: Tile): void {
+  // disallow moving when show history mode is active
+  if (historyBackup.value) return
+
   // check if the player is active
   if (currentPlayer.value !== BlackPlayer && isBlackPiece(board.value[fromTile])) return
   if (currentPlayer.value !== WhitePlayer && isWhitePiece(board.value[fromTile])) return
