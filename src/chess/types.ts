@@ -45,3 +45,40 @@ export type Board = Record<Tile, Piece>
  * This allows moves across a 8x8 board no matter where the piece is currently positioned on the board.
  */
 export type MovementMap = number[][]
+
+/**
+ * `HistoryEntry` is a record of the movement of a chess piece on a chess board.
+ */
+export interface HistoryEntry {
+  /**
+   * The tile the moved piece originally was located.
+   */
+  tile: Tile
+
+  /**
+   * The tile the piece moved to.
+   */
+  targetTile: Tile
+
+  /**
+   * The piece that moved.
+   */
+  piece: Piece
+
+  /**
+   * The enemy piece that was captured by the moving piece.
+   */
+  capturedPiece?: Piece
+
+  /**
+   * The piece that the original piece (pawn) was promoted to.
+   */
+  promotedPiece?: Piece
+}
+
+/**
+ * `History` is a list of `HistoryEntry`s.
+ *
+ * It contains all actions performed during a game of chess.
+ */
+export type History = HistoryEntry[]

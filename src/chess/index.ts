@@ -17,3 +17,6 @@ export type * from './directions'
 
 export * from './movement_map'
 export type * from './movement_map'
+
+export * from './history'
+export type * from './history'
