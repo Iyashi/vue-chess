@@ -2,13 +2,10 @@
 import { computed, ref, type Ref } from 'vue'
 import {
   getPieceDesciption,
-  isEnemyPiece,
-  getAxisIndicesForTile,
   HorizontalKeys,
   isTile,
   VerticalKeys,
-  calculateMovementPaths,
-  Moves,
+  canPieceMove,
   type Board,
   type Tile,
 } from '@/chess'
@@ -35,42 +32,7 @@ function handleDrop(event: DragEvent, tile: Tile) {
 }
 
 // hovering a piece
-// TODO: maybe make composable of this?
 const hoveredTile: Ref<Tile | null> = ref(null)
-const hoverState = computed(() => {
-  if (hoveredTile.value === null) return null
-  const piece = props.board[hoveredTile.value]
-  const movementMap = calculateMovementPaths(props.board, hoveredTile.value)
-  return { tile: hoveredTile.value, piece, movementMap }
-})
-
-function canMoveToTile(tile: Tile): boolean | null {
-  // fast-return if no tile is hovered anyways
-  if (hoverState.value === null) return null
-
-  const [x, y] = getAxisIndicesForTile(tile)
-  const moves = hoverState.value.movementMap[y][x]
-
-  // no moves defined in movement map of hovered piece, ignore tile
-  if (!moves) return null
-
-  // empty tiles
-  if (!props.board[tile]) {
-    return moves & ((moves & Moves.WalkOnEmpty) | Moves.JumpOnEmpty) ? true : false
-  }
-
-  // tiles occupied by enemy pieces
-  if (true === isEnemyPiece(hoverState.value.piece, props.board[tile])) {
-    return moves & (Moves.WalkOnEnemy | Moves.JumpOnEnemy) ? true : false
-  }
-
-  // tiles occupied by friendly pieces
-  if (false === isEnemyPiece(hoverState.value.piece, props.board[tile])) {
-    return moves & (Moves.WalkOnFriend | Moves.JumpOnFriend) ? true : false
-  }
-
-  return null
-}
 </script>
 
 <template>
@@ -93,7 +55,7 @@ function canMoveToTile(tile: Tile): boolean | null {
         v-for="(piece, tile) in props.board"
         :key="tile"
         :tile="tile"
-        :can-move-here="canMoveToTile(tile)"
+        :can-move-here="hoveredTile ? canPieceMove(props.board, hoveredTile, tile) : null"
         @drop="handleDrop($event, tile)"
         @dragover.prevent
         @mouseenter="hoveredTile = tile"

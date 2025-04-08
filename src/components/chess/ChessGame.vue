@@ -9,13 +9,10 @@ import {
   isBlackPiece,
   isWhitePiece,
   isPawnPiece,
-  isEnemyPiece,
   isKingPiece,
-  getAxisIndicesForTile,
-  getIndexForVerticalKey,
-  calculateMovementPaths,
-  Moves,
   isTile,
+  getIndexForVerticalKey,
+  canPieceMove,
   type Piece,
   type Tile,
 } from '@/chess'
@@ -52,37 +49,15 @@ function resetGame() {
 }
 
 function handleMove(fromTile: Tile, toTile: Tile): void {
-  if (canPieceMove(fromTile, toTile)) {
+  // check if the player is active
+  if (currentPlayer.value !== BlackPlayer && isBlackPiece(board.value[fromTile])) return
+  if (currentPlayer.value !== WhitePlayer && isWhitePiece(board.value[fromTile])) return
+
+  if (canPieceMove(board.value, fromTile, toTile)) {
     movePiece(fromTile, toTile)
     sourceTile.value = ''
     targetTile.value = ''
   }
-}
-
-function canPieceMove(fromTile: Tile, toTile: Tile): boolean {
-  if (fromTile === toTile) return false // cannot move to same tile
-
-  const movingPiece = board.value[fromTile]
-  const targetPiece = board.value[toTile]
-
-  // check if the player is active
-  if (currentPlayer.value !== BlackPlayer && isBlackPiece(movingPiece)) return false
-  if (currentPlayer.value !== WhitePlayer && isWhitePiece(movingPiece)) return false
-
-  // check if the move is valid
-  const movementPaths = calculateMovementPaths(board.value, fromTile)
-  const [toX, toY] = getAxisIndicesForTile(toTile)
-
-  const canMoveToEmptyTile =
-    (movementPaths[toY][toX] & (Moves.WalkOnEmpty | Moves.JumpOnEmpty)) !== 0 && !targetPiece
-  const canMoveToEnemyTile =
-    (movementPaths[toY][toX] & (Moves.WalkOnEnemy | Moves.JumpOnEnemy)) !== 0 &&
-    isEnemyPiece(movingPiece, targetPiece) === true
-  const canMoveToFriendlyTile =
-    (movementPaths[toY][toX] & (Moves.WalkOnFriend | Moves.JumpOnFriend)) !== 0 &&
-    isEnemyPiece(movingPiece, targetPiece) === false
-
-  return canMoveToEmptyTile || canMoveToEnemyTile || canMoveToFriendlyTile
 }
 
 function movePiece(fromTile: Tile, toTile: Tile) {

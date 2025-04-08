@@ -14,6 +14,7 @@ import {
   BishopMovementMap,
   QueenMovementMap,
   KingMovementMap,
+  canPieceMove,
 } from './movement_map'
 import * as Moves from './moves'
 import {
@@ -247,6 +248,26 @@ describe('getPieceMovementMap', () => {
   it('should return an empty movement map for invalid pieces', () => {
     expect(fn(WhitePiece)).toEqual(EmptyMovementMap)
     expect(fn(BlackPiece)).toEqual(EmptyMovementMap)
+  })
+})
+
+describe('canPieceMove', () => {
+  it('should return true when move is possible', () => {
+    const board = createEmptyBoard()
+    board['h7'] = BlackPiece | PawnPiece
+    expect(canPieceMove(board, 'h7', 'h5')).toBe(true)
+  })
+  it('should return false when move is possible but path is blocked', () => {
+    const board = createEmptyBoard()
+    board['h7'] = BlackPiece | PawnPiece
+    board['h6'] = BlackPiece | PawnPiece
+    expect(canPieceMove(board, 'h7', 'h5'), 'path exists, but blocked').toBe(false)
+  })
+  it('should return null when no move is possible at all', () => {
+    const board = createEmptyBoard()
+    board['h7'] = BlackPiece | PawnPiece
+    expect(canPieceMove(board, 'h7', 'h7'), 'same tile').toBe(null)
+    expect(canPieceMove(board, 'h7', 'a1'), 'no path exists').toBe(null)
   })
 })
 

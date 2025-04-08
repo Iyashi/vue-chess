@@ -291,6 +291,48 @@ export function getPositionalMovementMapSlice(map: MovementMap, x: number, y: nu
 }
 
 /**
+ * `canPieceMove` checks whether the piece on `fromTile` can move to `toTile` on given `board`.
+ *
+ * It returns one of the 3 states:
+ *  - `true` when path exists and is not blocked
+ *  - `false` when path exist but is blocked
+ *  - `null` when path does not exist at all
+ *
+ * @param board The chess board.
+ * @param fromTile The tile to move from.
+ * @param toTile The tile to move to.
+ * @returns `true` when path exists and is not blocked, `false` when path exist but is blocked and `null` when path does not exist for piece on fromTile.
+ */
+export function canPieceMove(board: Board, fromTile: Tile, toTile: Tile): boolean | null {
+  if (fromTile === toTile) return null // cannot move to same tile
+
+  const movingPiece = board[fromTile]
+  const targetPiece = board[toTile]
+
+  const [fromX, fromY] = getAxisIndicesForTile(fromTile)
+  const [toX, toY] = getAxisIndicesForTile(toTile)
+
+  // check if the target tile is within the movement map of the moving piece's
+  const movementMap = getPieceMovementMap(movingPiece)
+  const movementMapSlice = getPositionalMovementMapSlice(movementMap, fromX, fromY)
+  if (!movementMapSlice[toY][toX]) return null
+
+  // check if the path to the target tile is clear
+  const movementPaths = calculateMovementPaths(board, fromTile, movementMapSlice)
+
+  const canMoveToEmptyTile =
+    (movementPaths[toY][toX] & (Moves.WalkOnEmpty | Moves.JumpOnEmpty)) !== 0 && !targetPiece
+  const canMoveToEnemyTile =
+    (movementPaths[toY][toX] & (Moves.WalkOnEnemy | Moves.JumpOnEnemy)) !== 0 &&
+    isEnemyPiece(movingPiece, targetPiece) === true
+  const canMoveToFriendlyTile =
+    (movementPaths[toY][toX] & (Moves.WalkOnFriend | Moves.JumpOnFriend)) !== 0 &&
+    isEnemyPiece(movingPiece, targetPiece) === false
+
+  return canMoveToEmptyTile || canMoveToEnemyTile || canMoveToFriendlyTile
+}
+
+/**
  * Returns a slice of `MovementMap` for the piece on the given tile on the the given chessboard.
  *
  * The slice will be 8*8, same as chessboard size and can be directly applied to it. For example to indicate wether a piece can move to a tile or not.
@@ -299,14 +341,18 @@ export function getPositionalMovementMapSlice(map: MovementMap, x: number, y: nu
  * @param {Tile} tile The tile of the `Piece` on chessboard
  * @returns 8*8 `MovementMap` with all tiles marked where the piece on given tile can move to
  */
-export function calculateMovementPaths(board: Board, tile: Tile): MovementMap {
+export function calculateMovementPaths(
+  board: Board,
+  tile: Tile,
+  movementMapSlice?: MovementMap,
+): MovementMap {
   const piece = board[tile]
   const [x, y] = getAxisIndicesForTile(tile)
 
   if (!piece) return getPositionalMovementMapSlice(EmptyMovementMap, x, y) // no piece on tile
 
-  const movementMap = getPieceMovementMap(piece)
-  const movementMapSlice = getPositionalMovementMapSlice(movementMap, x, y)
+  if (!movementMapSlice)
+    movementMapSlice = getPositionalMovementMapSlice(getPieceMovementMap(piece), x, y)
 
   const result: MovementMap = new Array(8).fill([]).map(() => new Array(8).fill(Moves.NoMove))
 
