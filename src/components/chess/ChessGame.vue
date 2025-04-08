@@ -8,19 +8,21 @@ import {
   isWhitePiece,
   isPawnPiece,
   isEnemyPiece,
-  getPieceDesciption,
   isKingPiece,
   getAxisIndicesForTile,
   getIndexForVerticalKey,
   calculateMovementPaths,
   Moves,
   isTile,
+  createHistoryEntry,
   type Piece,
   type Tile,
+  type History,
 } from '@/chess'
 import ChessBoard from '@/components/chess/ChessBoard.vue'
 import ChessPromotionDialog from '@/components/chess/ChessPromotionDialog.vue'
 import ChessPiece from '@/components/chess/ChessPiece.vue'
+import ChessHistory from '@/components/chess/ChessHistory.vue'
 
 const board = ref(createBoard())
 const activePlayer = ref<'black' | 'white'>('black')
@@ -30,6 +32,7 @@ const targetTile = ref<Tile | ''>('')
 
 const blackCaptures = ref<Piece[]>([])
 const whiteCaptures = ref<Piece[]>([])
+const history = ref<History>([])
 
 function handleResetGame() {
   if (confirm('Are you sure you want to reset the game?')) {
@@ -44,6 +47,7 @@ function resetGame() {
   targetTile.value = ''
   blackCaptures.value = []
   whiteCaptures.value = []
+  history.value = []
   resetBoard(board.value)
 }
 
@@ -125,21 +129,38 @@ function movePiece(fromTile: Tile, toTile: Tile) {
   // start pawn promotion if a pawn reaches the end of the board
   const toY = getIndexForVerticalKey(toTile)
   if (isPawnPiece(movingPiece) && (toY === 0 || toY == 7)) {
-    startPromotion(toTile, movingPiece)
+    promotion.value = { tile: fromTile, targetTile: toTile, piece: movingPiece }
+    if (targetPiece) promotion.value.targetPiece = targetPiece
+  } else {
+    // add history entry
+    if (targetPiece) {
+      // add capture history entry
+      history.value.push(createHistoryEntry(fromTile, toTile, movingPiece, targetPiece))
+    } else {
+      // add move history entry
+      history.value.push(createHistoryEntry(fromTile, toTile, movingPiece))
+    }
   }
 }
 
 // Handle Pawn Promotion
-const promotion = ref<{ tile: Tile; piece: Piece } | null>(null)
-function startPromotion(tile: Tile, piece: Piece) {
-  if (promotion.value !== null) return // promotion already started
-  promotion.value = { tile, piece }
-  console.info('Promoting pawn on', tile)
-}
-function endPromotion(newPiece: Piece) {
+const promotion = ref<{ tile: Tile; targetTile: Tile; piece: Piece; targetPiece?: Piece } | null>(
+  null,
+)
+function promotePiece(newPiece: Piece) {
   if (promotion.value === null) return // promotion not started yet
   board.value[promotion.value.tile] = newPiece
-  console.info('Promoting pawn on', promotion.value.tile, 'to', getPieceDesciption(newPiece))
+
+  // add promotion history entry
+  history.value.push(
+    createHistoryEntry(
+      promotion.value.tile,
+      promotion.value.targetTile,
+      promotion.value.piece,
+      promotion.value.targetPiece,
+      newPiece,
+    ),
+  )
   promotion.value = null
 }
 </script>
@@ -186,7 +207,15 @@ function endPromotion(newPiece: Piece) {
       </div>
     </section>
 
-    <ChessPromotionDialog v-if="promotion" :piece="promotion!.piece" @promote="endPromotion" />
+    <section class="chess-history">
+      <header>
+        <h3>Game History</h3>
+      </header>
+
+      <ChessHistory :history="history" />
+    </section>
+
+    <ChessPromotionDialog v-if="promotion" :piece="promotion!.piece" @promote="promotePiece" />
   </div>
 </template>
 
@@ -249,6 +278,14 @@ function endPromotion(newPiece: Piece) {
   ul {
     list-style-type: none;
     padding: 0;
+  }
+}
+
+.chess-history {
+  .history-entry {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
   }
 }
 </style>
