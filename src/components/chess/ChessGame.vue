@@ -14,25 +14,27 @@ import {
   calculateMovementPaths,
   Moves,
   isTile,
-  createHistoryEntry,
   type Piece,
   type Tile,
-  type History,
 } from '@/chess'
+import { useHistory } from '@/chess/composables'
 import ChessBoard from '@/components/chess/ChessBoard.vue'
 import ChessPromotionDialog from '@/components/chess/ChessPromotionDialog.vue'
 import ChessPiece from '@/components/chess/ChessPiece.vue'
 import ChessHistory from '@/components/chess/ChessHistory.vue'
 
 const board = ref(createBoard())
-const activePlayer = ref<'black' | 'white'>('black')
-const turnCount = ref(1)
 const sourceTile = ref<Tile | ''>('')
 const targetTile = ref<Tile | ''>('')
 
-const blackCaptures = ref<Piece[]>([])
-const whiteCaptures = ref<Piece[]>([])
-const history = ref<History>([])
+const history = useHistory()
+const {
+  entries: historyEntries,
+  blackCapturedPieces,
+  whiteCapturedPieces,
+  currentTurn,
+  currentPlayer,
+} = history
 
 function handleResetGame() {
   if (confirm('Are you sure you want to reset the game?')) {
@@ -41,13 +43,9 @@ function handleResetGame() {
 }
 
 function resetGame() {
-  activePlayer.value = 'black'
-  turnCount.value = 0
   sourceTile.value = ''
   targetTile.value = ''
-  blackCaptures.value = []
-  whiteCaptures.value = []
-  history.value = []
+  history.clear()
   resetBoard(board.value)
 }
 
@@ -66,8 +64,8 @@ function canPieceMove(fromTile: Tile, toTile: Tile): boolean {
   const targetPiece = board.value[toTile]
 
   // check if the player is active
-  if (activePlayer.value !== 'black' && isBlackPiece(movingPiece)) return false
-  if (activePlayer.value !== 'white' && isWhitePiece(movingPiece)) return false
+  if (currentPlayer.value !== 'black' && isBlackPiece(movingPiece)) return false
+  if (currentPlayer.value !== 'white' && isWhitePiece(movingPiece)) return false
 
   // check if the move is valid
   const movementPaths = calculateMovementPaths(board.value, fromTile)
@@ -105,26 +103,13 @@ function movePiece(fromTile: Tile, toTile: Tile) {
   board.value[fromTile] = 0
   board.value[toTile] = movingPiece = movingPiece | MovedOnce
 
-  // update captures array
-  if (targetPiece) {
-    if (isBlackPiece(movingPiece)) {
-      blackCaptures.value.push(targetPiece)
-    } else {
-      whiteCaptures.value.push(targetPiece)
-    }
-  }
-
   // check for game end conditions
   if (isKingPiece(targetPiece)) {
-    if (confirm(activePlayer.value + ' has won! Start a new game?')) {
+    if (confirm(currentPlayer.value + ' has won! Start a new game?')) {
       resetGame()
     }
     return
   }
-
-  // update other game state
-  activePlayer.value = isBlackPiece(movingPiece) ? 'white' : 'black'
-  turnCount.value++
 
   // start pawn promotion if a pawn reaches the end of the board
   const toY = getIndexForVerticalKey(toTile)
@@ -135,10 +120,10 @@ function movePiece(fromTile: Tile, toTile: Tile) {
     // add history entry
     if (targetPiece) {
       // add capture history entry
-      history.value.push(createHistoryEntry(fromTile, toTile, movingPiece, targetPiece))
+      history.create(fromTile, toTile, movingPiece, targetPiece)
     } else {
       // add move history entry
-      history.value.push(createHistoryEntry(fromTile, toTile, movingPiece))
+      history.create(fromTile, toTile, movingPiece)
     }
   }
 }
@@ -152,14 +137,12 @@ function promotePiece(newPiece: Piece) {
   board.value[promotion.value.tile] = newPiece
 
   // add promotion history entry
-  history.value.push(
-    createHistoryEntry(
-      promotion.value.tile,
-      promotion.value.targetTile,
-      promotion.value.piece,
-      promotion.value.targetPiece,
-      newPiece,
-    ),
+  history.create(
+    promotion.value.tile,
+    promotion.value.targetTile,
+    promotion.value.piece,
+    promotion.value.targetPiece,
+    newPiece,
   )
   promotion.value = null
 }
@@ -168,8 +151,8 @@ function promotePiece(newPiece: Piece) {
 <template>
   <div class="chess-game">
     <section class="chess-info">
-      <p>Active Player: {{ activePlayer }}</p>
-      <p>Turn Count: {{ turnCount }}</p>
+      <p>Active Player: {{ currentPlayer }}</p>
+      <p>Turn Count: {{ currentTurn }}</p>
       <form
         class="manual-move"
         @submit.prevent="
@@ -192,7 +175,7 @@ function promotePiece(newPiece: Piece) {
       <div class="black">
         <p>Black captured:</p>
         <ul>
-          <li v-for="(piece, index) in blackCaptures" :key="index">
+          <li v-for="(piece, index) in whiteCapturedPieces" :key="index">
             <ChessPiece :piece="piece" />
           </li>
         </ul>
@@ -200,7 +183,7 @@ function promotePiece(newPiece: Piece) {
       <div class="white">
         <p>White captured:</p>
         <ul>
-          <li v-for="(piece, index) in whiteCaptures" :key="index">
+          <li v-for="(piece, index) in blackCapturedPieces" :key="index">
             <ChessPiece :piece="piece" />
           </li>
         </ul>
@@ -212,7 +195,7 @@ function promotePiece(newPiece: Piece) {
         <h3>Game History</h3>
       </header>
 
-      <ChessHistory :history="history" />
+      <ChessHistory :history="historyEntries" />
     </section>
 
     <ChessPromotionDialog v-if="promotion" :piece="promotion!.piece" @promote="promotePiece" />
