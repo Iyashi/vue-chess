@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import {
+  BlackPlayer,
+  WhitePlayer,
   createBoard,
   resetBoard,
   MovedOnce,
@@ -64,8 +66,8 @@ function canPieceMove(fromTile: Tile, toTile: Tile): boolean {
   const targetPiece = board.value[toTile]
 
   // check if the player is active
-  if (currentPlayer.value !== 'black' && isBlackPiece(movingPiece)) return false
-  if (currentPlayer.value !== 'white' && isWhitePiece(movingPiece)) return false
+  if (currentPlayer.value !== BlackPlayer && isBlackPiece(movingPiece)) return false
+  if (currentPlayer.value !== WhitePlayer && isWhitePiece(movingPiece)) return false
 
   // check if the move is valid
   const movementPaths = calculateMovementPaths(board.value, fromTile)

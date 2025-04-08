@@ -1,7 +1,9 @@
 import type { Ref, ComputedRef } from 'vue'
 import { ref, computed } from 'vue'
-import type { Board, History, HistoryEntry, Piece, Tile } from '..'
+import type { Board, History, HistoryEntry, Piece, Player, Tile } from '..'
 import {
+  BlackPlayer,
+  WhitePlayer,
   isHistoryEntry,
   isWhitePiece,
   isBlackPiece,
@@ -22,8 +24,8 @@ export function useHistory(history_?: History): UseHistory {
   const entryCount = computed(() => entries.value.length)
   const currentTurn = computed(() => entryCount.value + 1)
 
-  const currentPlayer = computed<'black' | 'white'>(() =>
-    isBlackPiece(lastEntry.value?.piece) ? 'white' : 'black',
+  const currentPlayer = computed<Player>(() =>
+    isBlackPiece(lastEntry.value?.piece) ? WhitePlayer : BlackPlayer,
   )
 
   const capturedPieces = computed<Piece[]>(() => {
@@ -98,7 +100,7 @@ export interface UseHistory {
   capturedPieces: ComputedRef<Piece[]>
   blackCapturedPieces: ComputedRef<Piece[]>
   whiteCapturedPieces: ComputedRef<Piece[]>
-  currentPlayer: ComputedRef<'black' | 'white'>
+  currentPlayer: ComputedRef<Player>
   board: ComputedRef<Board>
   clear: () => void
   create: typeof createHistoryEntry

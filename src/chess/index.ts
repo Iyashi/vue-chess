@@ -1,5 +1,8 @@
 export type * from './types'
 
+export * from './player'
+export type * from './player'
+
 export * from './board'
 export type * from './board'
 

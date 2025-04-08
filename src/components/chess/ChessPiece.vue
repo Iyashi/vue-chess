@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import {
+  BlackPlayer,
+  WhitePlayer,
   isBlackPiece,
   isWhitePiece,
   isPromotedPiece,
@@ -8,6 +10,7 @@ import {
   getPieceKind,
   getPieceDesciption,
   type Piece,
+  type Player,
 } from '@/chess'
 
 const props = defineProps<{
@@ -16,7 +19,7 @@ const props = defineProps<{
 
 const isBlack = computed(() => isBlackPiece(props.piece))
 const isWhite = computed(() => isWhitePiece(props.piece))
-const player = computed(() => (isBlack.value ? 'black' : 'white'))
+const player = computed<Player>(() => (isBlack.value ? BlackPlayer : WhitePlayer))
 
 const kind = computed(() => getPieceKind(props.piece))
 const desciption = computed(() => getPieceDesciption(props.piece))

@@ -1,4 +1,9 @@
 /**
+ * `Player` is a chess player and can be either black or white.
+ */
+export type Player = 'black' | 'white'
+
+/**
  * `Piece` is a chess piece.
  *
  * It is a bitmask that represents the piece's kind (pawn, rook, bishop, knight, queen, king), color (black or white) and other information like whether it has moved once.
