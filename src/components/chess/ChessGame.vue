@@ -134,7 +134,11 @@ function promotePiece(newPiece: Piece) {
       <button @click="handleResetGame">Reset Game</button>
     </section>
 
-    <ChessBoard :board="board" @move="handleMove" />
+    <section class="chess-board-wrapper">
+      <ChessBoard :board="board" @move="handleMove" />
+
+      <ChessPromotionDialog v-if="promotion" :piece="promotion!.piece" @promote="promotePiece" />
+    </section>
 
     <section class="chess-captures">
       <div class="black">
@@ -162,14 +166,11 @@ function promotePiece(newPiece: Piece) {
 
       <ChessHistory :history="historyEntries" />
     </section>
-
-    <ChessPromotionDialog v-if="promotion" :piece="promotion!.piece" @promote="promotePiece" />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .chess-game {
-  position: relative; // make promotion dialog overlay chess-game container
   width: 100%;
 
   // responsive scaling of chess board and pieces on board
@@ -194,6 +195,10 @@ function promotePiece(newPiece: Piece) {
       font-size: 3.5rem;
     }
   }
+}
+
+.chess-board-wrapper {
+  position: relative; // make promotion dialog overlay chess-game container
 }
 
 .chess-captures,
