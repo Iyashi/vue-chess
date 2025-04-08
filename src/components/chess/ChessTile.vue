@@ -7,7 +7,7 @@ const props = withDefaults(
     tile: Tile
     showLabel?: boolean
     showMovementIndicator?: boolean
-    canMoveHere?: boolean | null
+    canMoveHere?: boolean | null // true = can move, false = could move but blocked, null = cannot move at all
   }>(),
   {
     showLabel: false,
