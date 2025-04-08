@@ -19,7 +19,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
   <footer>
     <p>&copy; 2025 Jannik Lohaus</p>
-    <p>Source at <a :href="pkg.repository.url" rel="noopener">GitHub</a></p>
+    <p>Source at <a :href="pkg.repository.url" target="_blank" rel="noopener">GitHub</a></p>
   </footer>
 </template>
 
