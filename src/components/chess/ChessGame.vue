@@ -71,28 +71,16 @@ function canPieceMove(fromTile: Tile, toTile: Tile): boolean {
   const movementPaths = calculateMovementPaths(board.value, fromTile)
   const [toX, toY] = getAxisIndicesForTile(toTile)
 
-  // if allowed, move piece to empty target tile
-  if (movementPaths[toY][toX] & (Moves.WalkOnEmpty | Moves.JumpOnEmpty) && !targetPiece) {
-    return true
-  }
+  const canMoveToEmptyTile =
+    (movementPaths[toY][toX] & (Moves.WalkOnEmpty | Moves.JumpOnEmpty)) !== 0 && !targetPiece
+  const canMoveToEnemyTile =
+    (movementPaths[toY][toX] & (Moves.WalkOnEnemy | Moves.JumpOnEnemy)) !== 0 &&
+    isEnemyPiece(movingPiece, targetPiece) === true
+  const canMoveToFriendlyTile =
+    (movementPaths[toY][toX] & (Moves.WalkOnFriend | Moves.JumpOnFriend)) !== 0 &&
+    isEnemyPiece(movingPiece, targetPiece) === false
 
-  // if allowed, capture enemy piece at target tile and move piece to target tile
-  if (
-    movementPaths[toY][toX] & (Moves.WalkOnEnemy | Moves.JumpOnEnemy) &&
-    true === isEnemyPiece(movingPiece, targetPiece)
-  ) {
-    return true
-  }
-
-  // if allowed, move piece to friendly tile
-  if (
-    movementPaths[toY][toX] & (Moves.WalkOnFriend | Moves.JumpOnFriend) &&
-    false === isEnemyPiece(movingPiece, targetPiece)
-  ) {
-    return true
-  }
-
-  return false
+  return canMoveToEmptyTile || canMoveToEnemyTile || canMoveToFriendlyTile
 }
 
 function movePiece(fromTile: Tile, toTile: Tile) {
