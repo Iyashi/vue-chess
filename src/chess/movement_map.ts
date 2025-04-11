@@ -371,175 +371,69 @@ export function calculateMovementPaths(
     }
   }
 
+  // setPossibleMoves sets the possible moves for the piece at position (y, x) based on its movement map and current board state.
+  // It returns true if it is possible to continue walking further or false if the walk loop should stop here.
+  const setPossibleMoves = (y: number, x: number): boolean => {
+    const m = movementMapSlice[y][x]
+    if (!(m & Moves.WalkOnAny)) return false // cannot walk further
+    const t = getTileForAxisIndices(x, y)
+    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
+      // enemy encounted, allow move to enemy tile, but stop going further
+      result[y][x] |= Moves.WalkOnEnemy
+    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
+      // friend encounted, allow move to friendly tile, but stop going further
+      result[y][x] |= Moves.WalkOnFriend
+    } else if (m & Moves.WalkOnEmpty && !board[t]) {
+      // empty tile encountered, allow move and allow going further
+      result[y][x] |= Moves.WalkOnEmpty
+      return true // continue loop
+    } else if (board[t]) {
+      // stop going further if a piece is encountered
+    }
+    return false // break out of loop
+  }
+
   // from the piece's position, move towards each direction and stop when encountering an occupied tile
   // set the result map at the position of the occupied tile to `Moves.WalkOnEnemy` or `Moves.WalkOnEmpty` respectively
 
   // Walk up
   for (let i = y - 1; i >= 0; i--) {
-    const m = movementMapSlice[i][x]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(x, i)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[i][x] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[i][x] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(i, x)) break
   }
 
   // Walk down
   for (let i = y + 1; i <= 7; i++) {
-    const m = movementMapSlice[i][x]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(x, i)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[i][x] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[i][x] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(i, x)) break
   }
 
   // Walk left
   for (let i = x - 1; i >= 0; i--) {
-    const m = movementMapSlice[y][i]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(i, y)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[y][i] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[y][i] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(y, i)) break
   }
 
   // Walk right
   for (let i = x + 1; i <= 7; i++) {
-    const m = movementMapSlice[y][i]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(i, y)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[y][i] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[y][i] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(y, i)) break
   }
 
   // Walk diagonally up-left
   for (let ix = x - 1, iy = y - 1; ix >= 0 && iy >= 0; ix--, iy--) {
-    const m = movementMapSlice[iy][ix]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(ix, iy)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[iy][ix] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[iy][ix] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(iy, ix)) break
   }
 
   // Walk diagonally up-right
   for (let ix = x + 1, iy = y - 1; ix <= 7 && iy >= 0; ix++, iy--) {
-    const m = movementMapSlice[iy][ix]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(ix, iy)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[iy][ix] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[iy][ix] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(iy, ix)) break
   }
 
   // Walk diagonally down-left
   for (let ix = x - 1, iy = y + 1; ix >= 0 && iy <= 7; ix--, iy++) {
-    const m = movementMapSlice[iy][ix]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(ix, iy)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[iy][ix] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[iy][ix] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(iy, ix)) break
   }
 
   // Walk diagonally down-right
   for (let ix = x + 1, iy = y + 1; ix <= 7 && iy <= 7; ix++, iy++) {
-    const m = movementMapSlice[iy][ix]
-    if (!(m & Moves.WalkOnAny)) break // cannot walk to this tile whatsoever
-    const t = getTileForAxisIndices(ix, iy)
-    if (m & Moves.WalkOnEnemy && true === isEnemyPiece(piece, board[t])) {
-      // enemy encounted, allow move to enemy tile, but stop going further
-      result[iy][ix] |= Moves.WalkOnEnemy
-      break
-    } else if (m & Moves.WalkOnFriend && false === isEnemyPiece(piece, board[t])) {
-      // friend encounted, disallow move to friendly tile and stop going further
-      break
-    } else if (m & Moves.WalkOnEmpty && !board[t]) {
-      // empty tile
-      result[iy][ix] |= Moves.WalkOnEmpty
-    } else if (board[t]) {
-      // stop going further if a piece is encountered
-      break
-    }
+    if (!setPossibleMoves(iy, ix)) break
   }
 
   // TODO: Checkmate detection. Disallow king to move where it can be captured or blocked by an opponent's piece.
